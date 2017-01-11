@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+		http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+
+	<!-- CONFIGURACION DEL SERVICIO DE SPRING: MAIL SENDER -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${mail.host}"></property>
+		<property name="port" value="${mail.port}"></property>
+		<property name="username" value="${mail.username}"></property>
+		<property name="password" value="${mail.password}"></property>
+		<property name="defaultEncoding" value="UTF-8"></property>
+		<!-- Nombre de las propiedades, siguiendo convensiones de JAVA BEAN -->
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.transport.protocol">smtp</prop>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.debug">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="emailServices" class="net.atos.practica.notificacion_services.EmailServices">
+		<property name="mailSender" ref="mailSender" />
+		<property name="emailRemitente" value="${mail.remitente}" />
+
+	</bean>
+
+	<bean id="notificacionServices" class="net.atos.practica.notificacion_services.NotificacionServices">
+		<property name="asunto" value="${mail.asuntoAlertas}"></property>
+	</bean>
+
+	<bean id="plantillasEmail" class="net.atos.practica.notificacion_services.PlantillasEmail">
+		<property name="velocityEngine" ref="velocityEngine"></property>
+		<property name="pathPlantillaAlertas"
+			value="emailsPlantillas/notificarAlertasPlantilla.vm"></property>
+	</bean>
+	<bean id="velocityEngine"
+		class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+		<property name="velocityProperties">
+			<value>
+				resource.loader=class
+				class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+			</value>
+		</property>
+	</bean>
+
+
+
+</beans>

@@ -1,0 +1,153 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body" >
+		
+		<!-- NO BORRES EL GROWL -->
+		<p:growl id="growlPromocion" showDetail="true" sticky="true"
+			life="5000" />
+			
+		<h:outputScript library="js" name="calendar_es.js" />
+		
+		<h:form id="filtros">
+		
+			<p:panel header="Buscar Titulaciones">
+				<p:panelGrid columns="2">
+					<p:outputLabel for="filtroNombre" value="Nombre:" />
+					<p:inputText required="false" id="filtroNombre" value="#{titulacionController.filtro.nombreTitulacion}" />
+					
+					<p:outputLabel for="filtroNivel" value="Nivel:" />
+					<p:inputText required="false" id="filtroNivel" value="#{titulacionController.filtro.nivelTitulacion}" />
+
+					<p:commandButton id="buscar" value="Buscar" actionListener="#{titulacionController.buscar}" update="listaResultados" />
+					<p:commandButton id="nuevo" value="Nuevo" actionListener="#{titulacionController.nuevaTitulacion}" update="detalleForm" oncomplete="PF('detalle').show()" />
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:panel header="Resultados de la Búsqueda de Titulaciones">
+				<p:dataTable id="listaResultados" 
+							 emptyMessage="No se han encontrado titulaciones"
+							 value="#{titulacionController.lazyModelListTitulaciones}" 
+							 rowKey="#{titulacion.nombreTitulacion}" 
+							 var="titulacion" 
+							 sortMode="single" 
+							 selectionMode="single" 
+							 selection="#{titulacionController.tituloSelec}"
+							 rowsPerPageTemplate="10,25,50"
+							 paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							 paginator="true" rows="10"
+							 lazy="true"
+							 sortBy="#{titulacion.nombreTitulacion}">
+					
+					
+					
+					<p:ajax event="rowSelect" update="detalleForm:detalleFragment" listener="#{titulacionController.listarTitulaciones}" oncomplete="PF('detalle').show()" />
+					<p:ajax event="rowToggle" listener="#{titulacionController.obtenerTitulacionSeleccionada(titulacion.idTitulacion)}"/>
+
+					<p:column style="width:16px">
+						<p:rowToggler id="desplegarFila" />
+					</p:column>
+					
+					
+					<p:column headerText="Nombre" sortBy="#{titulacion.nombreTitulacion}">
+						<h:outputText value="#{titulacion.nombreTitulacion}" />
+					</p:column>
+					
+					<p:column headerText="Nivel" sortBy="#{titulacion.nivelTitulacion}">
+						<h:outputText value="#{titulacion.nivelTitulacion.nombreNivel}"/>
+					</p:column>
+					
+					
+					<p:rowExpansion>
+						<p:panelGrid columns="4">
+							<p:dataTable var="colaborador"
+								emptyMessage="No se han encontrado colaboradores en esa Titulación"
+								value="#{titulacionController.colaboradorEnTitulacion}" paginator="true"
+								rows="10">
+								<f:facet name="header">
+									Colaboradores de la Titulacion
+								</f:facet>
+								<p:column headerText="Apellidos "
+									sortBy="#{colaborador.primerApellido}">
+									<h:outputText
+										value="#{colaborador.primerApellido} #{colaborador.segundoApellido}" />
+								</p:column>
+								<p:column headerText="Nombre" sortBy="#{colaborador.nombre}">
+									<h:outputText value="#{colaborador.nombre}" />
+								</p:column>
+								<p:column headerText="email" sortBy="#{colaborador.email}">
+									<h:outputText value="#{colaborador.email}" />
+								</p:column>
+								<p:column headerText="Nivel GCM"
+									sortBy="#{colaborador.nivelGCM}">
+									<h:outputText value="#{colaborador.nivelGCM}" />
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+					</p:rowExpansion>
+					
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		
+		<h:form id="detalleForm">		
+			<p:dialog id="dialogoDetalle" widgetVar="detalle" resizable="false" header="Introduzca los datos de la Titulación" modal="true">
+				<p:fragment id="detalleFragment">
+					<p:messages globalOnly="true" id="msgs" showDetail="true" autoUpdate="true" closable="true" severity="fatal" />
+					<p:growl globalOnly="true" id="msgsInfo" showDetail="true" autoUpdate="true" severity="info" life="2000" />
+					<h:panelGrid columns="2" cellpadding="5">
+						<p:outputLabel for="nombre" value="Nombre:" />
+						<p:inputText required="true"
+									 id="nombre" 
+									 value="#{titulacionController.tituloSelec.nombreTitulacion}" />
+						
+						<p:outputLabel for="nivel" value="Nivel:" />
+						<p:selectOneMenu required="true" id="nivel" 
+										 value="#{titulacionController.tituloSelec.nivelTitulacion}" converter="entityConverter" editable="false">
+            				<f:selectItems value="#{titulacionController.niveles}" var="nivel" itemLabel="#{nivel.nombreNivel}" itemValue="#{nivel}"/>
+       					</p:selectOneMenu>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="1">
+						<p:pickList id="titulacionPickList" value="#{titulacionController.listaDual}" rendered="#{titulacionController.tituloSelec.nombreTitulacion != null}" var="colaborador" effect="bounce"
+                		itemValue="#{colaborador}" itemLabel="#{colaborador.codigo} - #{colaborador.nombre}" showSourceControls="true" showTargetControls="true" showCheckbox="false" responsive="true"
+                		showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="entityConverter">
+ 
+        					<f:facet name="sourceCaption">Todos los colaboradores</f:facet>
+        					<f:facet name="targetCaption">Colaboradores de la titulación</f:facet>
+        					
+    					</p:pickList>
+					</h:panelGrid>
+
+					<h:panelGrid columns="3">
+						<p:commandButton id="guardarNuevo" value="Guardar"
+							actionListener="#{titulacionController.crear}"							
+							update="filtros:listaResultados,msgsInfo"
+							rendered="#{titulacionController.tituloSelec.nombreTitulacion == null}"	
+							oncomplete="if (args &amp;&amp; !args.validationFailed ) PF('detalle').hide()" >
+						</p:commandButton>
+						<p:commandButton id="modificar" value="Modificar"
+							actionListener="#{titulacionController.actualizar}"
+							update="detalleFragment,filtros:listaResultados,msgsInfo"
+							rendered="#{titulacionController.tituloSelec.nombreTitulacion != null}"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()" />
+						<p:commandButton id="eliminar" value="Borrar"
+							actionListener="#{titulacionController.borrar}"
+							update="detalleFragment,filtros:listaResultados,msgs,msgsInfo"
+							rendered="#{titulacionController.tituloSelec.nombreTitulacion != null}"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()" />
+						<p:commandButton id="cancelar" value="Cancelar" immediate="true" oncomplete="PF('detalle').hide()" >
+							     <p:resetInput target=":detalleForm" />
+						</p:commandButton>
+					</h:panelGrid>
+				</p:fragment>
+
+			</p:dialog>
+
+		</h:form>
+						
+	</ui:define>
+</ui:composition>

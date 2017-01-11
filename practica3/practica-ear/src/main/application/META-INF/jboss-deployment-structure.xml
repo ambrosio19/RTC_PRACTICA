@@ -1,0 +1,34 @@
+<jboss-deployment-structure  xmlns="urn:jboss:deployment-structure:1.1">
+<ear-subdeployments-isolated>true</ear-subdeployments-isolated>
+   <deployment>
+   <!-- Las exclusiones te permiten prevenir que el servidor automaticamente añada dependencias propias -->
+      <exclusions>
+            <module name="org.apache.commons.logging" />
+            <module name="org.apache.log4j" />
+            <module name="org.jboss.logging" />
+            <module name="org.jboss.logging.jul-to-slf4j-stub" />
+            <module name="org.jboss.logmanager" />
+            <module name="org.jboss.logmanager.log4j" />
+            <module name="org.slf4j" />
+            <module name="org.slf4j.impl" />
+      </exclusions>
+      
+      <dependencies>
+         <module name="javax.faces.api" slot="main"/>
+      </dependencies>  
+   </deployment>
+   
+   <sub-deployment name="practica-war-1.0-SNAPSHOT.war">
+      <exclusions>
+            <module name="org.apache.commons.logging" />
+            <module name="org.apache.log4j" />
+            <module name="org.jboss.logging" />
+            <module name="org.jboss.logging.jul-to-slf4j-stub" />
+            <module name="org.jboss.logmanager" />
+            <module name="org.jboss.logmanager.log4j" />
+            <module name="org.slf4j" />
+            <module name="org.slf4j.impl" />
+      </exclusions>
+   </sub-deployment>
+   
+</jboss-deployment-structure>

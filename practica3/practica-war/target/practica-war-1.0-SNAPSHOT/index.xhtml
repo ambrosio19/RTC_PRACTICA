@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"     
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Llamalo X</title>
+	<h:outputStylesheet library="css" name="/css/style.css"  />
+	
+</h:head>
+<h:body>
+	<h:form id="myform" >
+		<h2>AJAX TEST</h2>
+		<h:outputText value="TEXTO: #{message.nif}" />
+		<h:outputText value="BEAN: #{myController}" />
+		<p:commandButton actionListener="#{myController.test}"/>
+		<h:panelGrid columns="3" cellpadding="5">
+			<p:outputLabel for="firstname" value="KeyUp: " />
+			<p:inputText required="false" id="filtro" value="#{ajaxMB.filtro}">
+			</p:inputText>
+			<p:inputText required="false" id="firstname" value="#{ajaxMB.texto}">
+				<p:ajax event="blur" update="firstname,out1" />
+			</p:inputText>
+			<p:selectOneMenu id="combo">
+				<f:selectItem itemValue="null" itemLabel="Selecciona una"/>
+				<f:selectItems value="#{ajaxMB.listaPersonas}" var="persona" itemLabel="#{persona.nombre}" itemValue="#{persona.nif}" />
+			</p:selectOneMenu>
+			<h:outputText id="out1" value="#{ajaxMB.texto}" />
+		</h:panelGrid>
+
+		<p:spacer height="40" />
+		<p:commandButton value="Busca"
+			actionListener="#{ajaxMB.obtenerListaCoches}" update="lista" ></p:commandButton>
+		<p:commandButton value="CreaPersona"
+			actionListener="#{ajaxMB.insertarPersona}"  ></p:commandButton>
+		<p:spacer height="4	0" />
+
+		<p:dataTable 	id="lista" value="#{ajaxMB.listaCoches}" rowKey="#{coche.matricula}" 
+						var="coche" sortMode="single" selectionMode="single" selection="#{ajaxMB.selectedCoche}">
+
+			<p:ajax event="rowSelect"  update="myform:mydialog" oncomplete="PF('dialogo').show();"/>
+			
+			<p:column headerText="Matricula" sortBy="#{coche.matricula}">
+				<h:outputText value="#{coche.matricula}" />
+			</p:column>
+			<p:column headerText="Marca" sortBy="#{coche.marca}">
+				<h:outputText value="#{coche.marca}" />
+			</p:column>
+			<p:column headerText="Modelo" sortBy="#{coche.modelo}">
+				<h:outputText value="#{coche.modelo}" />
+			</p:column>
+			<p:column headerText="Año" sortBy="#{coche.ano}">
+				<h:outputText value="#{coche.ano}" />
+			</p:column>
+			<p:column headerText="Nif Propietario" sortBy="#{coche.propietario.nif}" >
+				<h:outputText value="#{coche.propietario.nif}" />
+			</p:column>
+			<p:column headerText="Nombre Propietario" sortBy="#{coche.propietario.nombre}">
+				<h:outputText value="#{coche.propietario.nombre}" />
+			</p:column>
+		</p:dataTable>
+
+ 	<p:dialog id="mydialog" header="DATOS" widgetVar="dialogo" >
+			<p:panelGrid columns="2" id="detalle" rendered="#{ajaxMB.selectedCoche != null}">
+				<h:outputText value="Matricula: " ></h:outputText>
+				<h:outputText value="#{ajaxMB.selectedCoche.matricula}" ></h:outputText>
+				<h:outputText value="Marca: " ></h:outputText>
+				<h:outputText value="#{ajaxMB.selectedCoche.marca}" ></h:outputText>
+				<h:outputText value="Modelo: " ></h:outputText>
+				<h:outputText value="#{ajaxMB.selectedCoche.modelo}" ></h:outputText>
+				<h:outputText value="Año: " ></h:outputText>
+				<h:outputText value="#{ajaxMB.selectedCoche.ano}" ></h:outputText>
+				<h:outputText value="Nif Propietario: " ></h:outputText>
+				<h:outputText value="#{ajaxMB.selectedCoche.propietario.nif}" ></h:outputText>
+				<h:outputText value="Nombre Propietario: " ></h:outputText>
+				<h:outputText value="#{ajaxMB.selectedCoche.propietario.nombre}" ></h:outputText>
+			</p:panelGrid>
+		</p:dialog>
+	</h:form>
+</h:body>
+</html>

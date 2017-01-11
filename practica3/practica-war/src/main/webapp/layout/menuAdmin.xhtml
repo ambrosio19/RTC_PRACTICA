@@ -1,0 +1,64 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:sec="http://www.springframework.org/security/tags">
+	
+	<h:form id="menuAdmin" style="margin-top:2%;">
+	
+		<p:menubar rendered="#{sec:areAnyGranted('ROLE_USER')}" styleClass="centeredMenuBar">
+			<p:submenu id="blanco" styleClass="mantenimiento" style="z-index:-1"></p:submenu>
+		</p:menubar>
+    	  
+	   <p:menubar id="menuPrincipal" rendered="#{sec:areAnyGranted('ROLE_ADMIN')}" styleClass="centeredMenuBar">
+	       <p:submenu id="mantenimiento" label="Mantenimiento" styleClass="mantenimiento">         
+               	<p:menuitem id="Colaborador" value="Colaborador" url="/pages/crudColaboradorAdmin.xhtml"/>
+               	<p:menuitem id="Proyectos" value="Proyectos" url="/pages/crudProyecto.xhtml"/>
+               	<p:menuitem id="Promocion" value="Promoción" url="/pages/crudPromocion.xhtml"/>
+				<p:menuitem id="Titulacion" value="Titulación" url="/pages/crudTitulacion.xhtml"/>
+				<p:menuitem id="Capacidad" value="Capacidad" url="/pages/crudCapacidad.xhtml"/>
+				<p:menuitem id="Roles" value="Roles" url="/pages/crudRolesSeguridad.xhtml"/>
+				<p:menuitem id="Estatus" value="Estatus" url="/pages/crudEstatus.xhtml"/>
+				<p:menuitem id="CatProfesional" value="Cat. Profesional" url="/pages/crudCatProfesional.xhtml"/>          	         
+	       </p:submenu>
+
+	       <p:menuitem value="Gestión del Perfil" url="/pages/crudColaborador.xhtml" style="margin-right: 10px;"/>
+	       <p:menuitem value="Generación de Información" url="/pages/crudGeneracionDeInformacion.xhtml" style="margin-right: 10px;"/> 
+	       <p:menuitem value="Alertas" url="/pages/crudAlertas.xhtml" style="margin-right: 10px;"/>
+	       <p:menuitem value="Visualización de Resultados" url="/pages/res/nivelesGCM.xhtml" style="margin-right: 10px;"/>     
+	      
+	      
+	      <f:facet name="options">
+		    	<p:commandButton style="position:relative; margin-left: 90%; background: #{alertasController.buttonColor ? 'crimson' : ''};" id="alerts" type="button" value="#{alertasController.numAlertas}" icon="fa fa-fw ui-icon fa-bell" onclick="PF('alertasAct').show();">
+		    		
+		    		<p:ajax update="list"  />
+		    		
+		    	</p:commandButton>
+		    	<p:poll interval="1800" listener="#{alertasController.listarAlertas}" update="alerts" />
+		    	<p:dialog  id="alertasActuales" header="Alertas activas" widgetVar="alertasAct" minHeight="40" width="500">
+    						<p:dataTable emptyMessage="No se han encontrado alertas" id="list" value="#{alertasController.alertasActivas}" rowKey="#{aler.nombreAlerta}" 
+								var="aler" sortMode="single" >
+								<p:column headerText="Alerta: ">
+									<h:outputText value="#{aler.nombreAlerta}" />
+								</p:column>
+								<p:column headerText="Fecha de fin: ">
+									<h:outputText value="#{aler.fechaDeReferencia}">
+										<f:convertDateTime pattern="dd/MM/yyyy" timeZone="BST" />
+									</h:outputText>
+								</p:column>
+								
+								
+							</p:dataTable>
+
+				</p:dialog>
+		    </f:facet>
+	</p:menubar> 
+
+	</h:form>
+
+
+	
+	
+</ui:composition>

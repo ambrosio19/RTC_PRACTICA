@@ -1,0 +1,184 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body" >
+		
+		<!-- NO BORRES EL GROWL -->
+		<p:growl id="growlPromocion" showDetail="true" sticky="true"
+			life="5000" />
+			
+		<h:outputScript library="js" name="calendar_es.js" />
+		
+		<h:form id="filtros">
+		
+			<p:panel header="Buscar Promociones">
+				<p:panelGrid columns="2">
+					<p:outputLabel for="filtroNombre" value="Nombre:" />
+					<p:inputText required="false" id="filtroNombre" value="#{promocionController.filtro.nombrePromocion}" />
+					<p:outputLabel for="filtroConvocatoria" value="Convocatoria:" />
+					<p:inputText required="false" id="filtroConvocatoria" value="#{promocionController.filtro.nConvocatoria}" />
+
+					<p:commandButton id="buscar" value="Buscar" actionListener="#{promocionController.buscar}" update="listaResultados" />
+					<p:commandButton id="nuevo" value="Nuevo" actionListener="#{promocionController.nuevaPromocion}" update="detalleForm" oncomplete="PF('detalle').show()" />
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:panel header="Resultados de la Búsqueda de Promociones">
+				<p:dataTable id="listaResultados" 
+							 emptyMessage="No se han encontrado promociones"
+							 value="#{promocionController.lista}" 
+							 rowKey="#{promocion.nombrePromocion}" 
+							 var="promocion" 
+							 sortMode="single" 
+							 selectionMode="single" 
+							 selection="#{promocionController.promocionSelec}"
+							 paginator="true" rows="10">
+					<p:ajax event="rowSelect" update="detalleForm:detalleFragment" listener="#{promocionController.listarColaboradores}" oncomplete="PF('detalle').show()" />
+					<p:ajax event="rowToggle" listener="#{promocionController.obtenerPromocionSeleccionada(promocion.idPromociones)}"/>
+
+					<p:column style="width:16px">
+						<p:rowToggler id="desplegarFila" />
+					</p:column>
+					
+					<p:column headerText="Nombre" sortBy="#{promocion.nombrePromocion}">
+						<h:outputText value="#{promocion.nombrePromocion}" />
+					</p:column>
+					<p:column headerText="Convocatoria" sortBy="#{promocion.nConvocatoria}">
+						<h:outputText value="#{promocion.nConvocatoria}" />
+					</p:column>
+					<p:column headerText="Inicio de la Promoción" sortBy="#{promocion.fechaInicioPromo}">
+						<h:outputText value="#{promocion.fechaInicioPromo}">
+							<f:convertDateTime pattern="dd/MM/yyyy"  timeZone="BST"/>
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Finalización de la Promoción" sortBy="#{promocion.fechaFinPeriodo1}">
+						<h:outputText value="#{promocion.fechaFinPeriodo1}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="BST" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Fin del Programa Formativo" sortBy="#{promocion.fechaFinFinal}">
+						<h:outputText value="#{promocion.fechaFinFinal}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="BST" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Primer Periodo No Lectivo" sortBy="#{promocion.fechaNoLectivo1}">
+						<h:outputText value="#{promocion.fechaNoLectivo1}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="BST" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Segundo Periodo No Lectivo" sortBy="#{promocion.fechaNoLectivo2}">
+						<h:outputText value="#{promocion.fechaNoLectivo2}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="BST" />
+						</h:outputText>
+					</p:column>
+					
+					<p:rowExpansion>
+						<p:panelGrid columns="4">
+							<p:dataTable var="colaborador"
+								emptyMessage="No se han encontrado colaboradores en esta Promoción"
+								value="#{promocionController.listaColab}">
+								<f:facet name="header">
+									Colaboradores en la Promocion
+								</f:facet>
+								<p:column headerText="Apellidos "
+									sortBy="#{colaborador.primerApellido}">
+									<h:outputText
+										value="#{colaborador.primerApellido} #{colaborador.segundoApellido}" />
+								</p:column>
+								<p:column headerText="Nombre" sortBy="#{colaborador.nombre}">
+									<h:outputText value="#{colaborador.nombre}" />
+								</p:column>
+								<p:column headerText="email" sortBy="#{colaborador.email}">
+									<h:outputText value="#{colaborador.email}" />
+								</p:column>
+
+							</p:dataTable>
+						</p:panelGrid>
+					</p:rowExpansion>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		
+		<h:form id="detalleForm">		
+			<p:dialog id="dialogoDetalle" widgetVar="detalle" resizable="false" header="Introduzca los datos de la Promoción" modal="true">
+				<p:fragment id="detalleFragment">
+					<p:messages globalOnly="true" id="msgs" showDetail="true" autoUpdate="true" closable="true" severity="fatal" />	
+					<p:growl globalOnly="true" id="msgsInfo" showDetail="true" autoUpdate="true" severity="info" life="2000" />
+					<h:panelGrid columns="2" cellpadding="5">
+						<p:outputLabel for="nombre" value="Nombre:" />
+						<p:inputText required="true"
+									 id="nombre" 
+									 value="#{promocionController.promocionSelec.nombrePromocion}"  />
+									 
+						<p:outputLabel for="convocatoria" value="Convocatoria:" />
+						<p:inputText  required="true"
+									  id="convocatoria" 
+									  value="#{promocionController.promocionSelec.nConvocatoria}" 
+									  disabled="#{promocionController.promocionSelec.nConvocatoria} !=null}" />
+						
+						<p:outputLabel for="inicioPromo" value="Inicio de la Promoción:" />
+						<p:calendar required="true" 
+									locale="es" 
+									id="inicioPromo" 
+									value="#{promocionController.promocionSelec.fechaInicioPromo}" 
+									navigator="true" />
+        										
+						<p:outputLabel for="perNoLect1" value="Primer Periodo no Lectivo:" />
+						<p:calendar required="true"
+									locale="es" 
+									id="perNoLect1" 
+									value="#{promocionController.promocionSelec.fechaNoLectivo1}" 
+									navigator="true" />
+									
+						<p:outputLabel for="perNoLect2" value="Segundo Periodo no Lectivo:" />
+						<p:calendar required="true"
+									locale="es" 
+									id="perNoLect2" 
+									value="#{promocionController.promocionSelec.fechaNoLectivo2}" 
+									navigator="true" />
+					</h:panelGrid>
+					
+					<h:panelGrid columns="1">
+						<p:pickList id="promocionPickList" value="#{promocionController.listaDual}" rendered="#{promocionController.promocionSelec != null}" var="colaborador" effect="bounce"
+                		itemValue="#{colaborador}" itemLabel="#{colaborador.codigo} - #{colaborador.nombre}" showSourceControls="true" showTargetControls="true" showCheckbox="false" responsive="true"
+                		showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="entityConverter">
+ 
+        					<f:facet name="sourceCaption">Todos los colaboradores</f:facet>
+        					<f:facet name="targetCaption">Colaboradores de la promoción</f:facet>
+        					
+    					</p:pickList>
+					</h:panelGrid>
+
+					<h:panelGrid columns="3">
+						<p:commandButton id="guardarNuevo" value="Guardar"
+							actionListener="#{promocionController.insertar}"							
+							update="detalleFragment,filtros:listaResultados"
+							rendered="#{promocionController.promocionSelec.nombrePromocion == null }"	
+							oncomplete="if (args &amp;&amp; !args.validationFailed ) PF('detalle').hide()" >
+						</p:commandButton>
+						<p:commandButton id="modificar" value="Modificar"
+							actionListener="#{promocionController.actualizar}"
+							update="detalleFragment,filtros:listaResultados"
+							rendered="#{promocionController.promocionSelec.nombrePromocion != null}"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()" />
+						<p:commandButton id="eliminar" value="Borrar"
+							actionListener="#{promocionController.borrar}"
+							update="detalleFragment,filtros:listaResultados,msgs"
+							rendered="#{promocionController.promocionSelec.nombrePromocion != null}"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()" />
+						<p:commandButton id="cancelar" value="Cancelar" immediate="true" oncomplete="PF('detalle').hide()" >
+							     <p:resetInput target=":detalleForm" />
+						</p:commandButton>
+					</h:panelGrid>
+				</p:fragment>
+
+			</p:dialog>
+
+		</h:form>
+		
+				
+	</ui:define>
+</ui:composition>

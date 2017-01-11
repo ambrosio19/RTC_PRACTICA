@@ -1,0 +1,29 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body">
+		<div class="ui-fluid">
+			<div class="ui-grid ui-grid-responsive">
+				<h:form id="principal" enctype="multipart/form-data">
+					<p:spacer height="100"></p:spacer>
+					<div style="width: 100%;" align="center">
+						<div style="width: 350px">
+							<p:panel header="" align="center">
+
+								<p:messages for="denegadoMessage" id="messageDenegado" showDetail="true" autoUpdate="true" closable="false" />
+								
+								<f:event listener="#{loginController.accesoDenegado()}" type="preRenderView" />
+
+								<p:spacer height="15"></p:spacer>
+								<p:commandButton value="Volver" onclick="window.history.back();" />
+							</p:panel>
+						</div>
+					</div>
+				</h:form>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

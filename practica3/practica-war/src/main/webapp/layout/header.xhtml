@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"  	
+	template="/layout/layoutHeader.xhtml">
+
+	<ui:define name="bodyCabecera">
+
+		<div>
+
+
+			<div class="ui-widget-header clearfix"
+				style="height: 18px">
+
+				<div rendered="#{identity.loggedIn}">
+					<div style="float: left; width: 150px">
+						<h:outputText class="cabeceraTXT"
+							value="Version: 0.1Beta" />
+					</div>
+
+					<div style="float: left; width: 180px">
+						<h:outputText class="cabeceraTXT"
+							value="Usuario: #{identity.usuario}" />
+					</div>
+
+		
+				</div>
+			</div>
+		</div>
+
+		<div style="height:2px"/>
+
+	</ui:define>
+
+</ui:composition>

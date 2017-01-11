@@ -1,0 +1,109 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body">
+		<h:form id="roles" >
+			<p:panel header="Buscar Roles">
+				<p:panelGrid columns="2" >
+					<p:outputLabel for="rol" value="Nombre:" />
+					<p:inputText required="false" id="rol" value="#{rolesSeguridadController.rol}"/>
+			
+					<p:commandButton id="buscar" value="Buscar" actionListener="#{rolesSeguridadController.buscar}" update="listaResultados" />
+					<p:commandButton id="nuevo" value="Nuevo" actionListener="#{rolesSeguridadController.nuevoRol}" update="modifica:modificaFragment" oncomplete="PF('modifica').show()" />
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:panel header="Resultados de la Búsqueda de Roles">
+				<p:dataTable emptyMessage="No se han encontrado roles" id="listaResultados" value="#{rolesSeguridadController.roles}" rowKey="#{roles.idRol}" 
+								var="roles" sortMode="single" selectionMode="single" selection="#{rolesSeguridadController.rolSelec}" paginator="true" rows="10">
+												<p:ajax event="rowSelect" listener="#{rolesSeguridadController.listarRoles}" update="modifica:modificaFragment" oncomplete="PF('modifica').show()"/>
+												<p:ajax event="rowToggle" listener="#{rolesSeguridadController.obtenerRolSeleccionado(roles.idRol)}"/>
+					
+					<p:column style="width:16px">
+						<p:rowToggler id="desplegarFila" />
+					</p:column>
+												
+					<p:column headerText="Rol" sortBy="#{roles.nombreRol}">
+						<h:outputText value="#{roles.nombreRol}" />
+					</p:column>
+					<p:column headerText="Descripción" sortBy="#{roles.descripcionRol}">
+						<h:outputText value="#{roles.descripcionRol}" />
+					</p:column>
+					<p:column headerText="Baja" sortBy="#{roles.baja}">
+						<h:outputText rendered="#{roles.baja == false}" value="No" />
+						<h:outputText rendered="#{roles.baja == true}" value="Si" />	
+					</p:column>
+					
+					
+					
+					<p:rowExpansion>
+						<p:panelGrid columns="4">
+							<p:dataTable var="colaborador"
+								emptyMessage="No se han encontrado colaboradores en este Rol"
+								value="#{rolesSeguridadController.colaboradorEnRol}">
+								<f:facet name="header">
+									Colaboradores del Rol
+								</f:facet>
+								<p:column headerText="Apellidos "
+									sortBy="#{colaborador.primerApellido}">
+									<h:outputText
+										value="#{colaborador.primerApellido} #{colaborador.segundoApellido}" />
+								</p:column>
+								<p:column headerText="Nombre" sortBy="#{colaborador.nombre}">
+									<h:outputText value="#{colaborador.nombre}" />
+								</p:column>
+								<p:column headerText="email" sortBy="#{colaborador.email}">
+									<h:outputText value="#{colaborador.email}" />
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+					</p:rowExpansion>
+					
+				</p:dataTable>
+			</p:panel>
+		
+		</h:form>
+		<h:form id="modifica">
+			<p:dialog id="dialogoModifica" widgetVar="modifica" resizable="false" header="Modificar" modal="true">
+				<p:fragment id="modificaFragment">
+				<p:messages globalOnly="true" id="message" showDetail="true" autoUpdate="true" severity="fatal" closable="true" />
+				<p:growl globalOnly="true" id="messageInfo" showDetail="true" autoUpdate="true" severity="info" life="2000" />						
+					<h:panelGrid columns="2" cellpadding="5">
+						<p:outputLabel for="nameRol" value="Nombre del rol:" />
+						<p:inputText required="true" id="nameRol" maxlength="15" value="#{rolesSeguridadController.rolSelec.nombreRol}"/>
+						<p:outputLabel for="descrip" value="Descripción:" />
+						<p:inputText required="false" id="descrip" maxlength="100" value="#{rolesSeguridadController.rolSelec.descripcionRol}"/>
+						<p:outputLabel for="baja" value="Baja:" />
+						<p:selectOneButton id="baja" value="#{rolesSeguridadController.rolSelec.baja}">
+           		 			<f:selectItem itemLabel="Si" itemValue="true" />
+            				<f:selectItem itemLabel="No" itemValue="false" />
+        				</p:selectOneButton>
+        			</h:panelGrid>
+        			
+        			<h:panelGrid columns="1">
+						<p:pickList id="rolPickList" value="#{rolesSeguridadController.listaDual}" rendered="#{rolesSeguridadController.rolSelec != null}" var="colaborador" effect="bounce"
+                		itemValue="#{colaborador}" itemLabel="#{colaborador.codigo} - #{colaborador.nombre}" showSourceControls="true" showTargetControls="true" showCheckbox="false" responsive="true"
+                		showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="entityConverter">
+ 
+        					<f:facet name="sourceCaption">Todos los colaboradores</f:facet>
+        					<f:facet name="targetCaption">Colaboradores del rol</f:facet>
+        					
+    					</p:pickList>
+					</h:panelGrid>
+					
+        			<h:panelGrid columns="3">
+        					 <p:commandButton id="modify" value="Modificar" actionListener="#{rolesSeguridadController.modificar}" rendered="#{rolesSeguridadController.rolSelec.nombreRol != null}" update="message,roles:listaResultados,messageInfo,modificaFragment" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('modifica').hide()"/>
+        					 <p:commandButton id="guardarNuevo" value="Guardar" actionListener="#{rolesSeguridadController.insertar}" rendered="#{rolesSeguridadController.rolSelec.nombreRol == null}" update="message,messageInfo,modificaFragment,roles:listaResultados" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('modifica').hide()"/>
+        					 <p:commandButton id="borrar" value="Borrar" actionListener="#{rolesSeguridadController.borrar}" rendered="#{rolesSeguridadController.rolSelec.nombreRol != null}" update="message,roles:listaResultados,messageInfo" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('modifica').hide()"/>
+        					 <p:commandButton id="cancela" value="Cancelar" oncomplete="PF('modifica').hide()"/>				
+					</h:panelGrid>
+				</p:fragment>
+			</p:dialog>
+		</h:form>
+
+	
+	</ui:define>
+</ui:composition>

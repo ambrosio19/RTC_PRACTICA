@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" contentType="text/html">
+
+	<html>
+		<h:head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<meta http-equiv="pragma" content="no-cache" />
+			<meta http-equiv="cache-control" content="no-cache" />
+			<meta http-equiv="expires" content="0" />
+		
+			<title>Llamalo X</title>
+			
+			<link rel="shortcut icon" href="/practica-war/image/shortcut_icon.png" />
+			<link rel="stylesheet" type="text/css" href="/practica-war/css/style.css" />
+			<link rel="stylesheet" type="text/css" href="/practica-war/css/style_colaborador.css" />
+			<link rel="stylesheet" type="text/css" href="/practica-war/css/d3.relationshipgraph.min.css" />
+	
+			<ui:insert name="head" />
+		
+			<script>
+				PrimeFaces.locales['es'] = {
+		            closeText: 'Cerrar',
+		            prevText: 'Anterior',
+		            nextText: 'Siguiente',
+		            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+		            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+		            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+		            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		            dayNamesMin: ['D','L','M','M','J','V','S'],
+		            weekHeader: 'Semana',
+		            firstDay: 1,
+		            isRTL: false,
+		            showMonthAfterYear: false,
+		            yearSuffix: '',
+		            timeOnlyTitle: 'Sólo hora',
+		            timeText: 'Tiempo',
+		            hourText: 'Hora',
+		            minuteText: 'Minuto',
+		            secondText: 'Segundo',
+		            currentText: 'Fecha actual',
+		            ampm: false,
+		            month: 'Mes',
+		            week: 'Semana',
+		            day: 'Día',
+		            allDayText : 'Todo el día'
+		    	};
+			</script>
+			<!-- D3 4.4.0
+			<script type="text/javascript" charset="UTF-8" src="/practica-war/js/d3js/d3.js"></script>
+			 -->
+			 <script type="text/javascript" charset="UTF-8" src="https://d3js.org/d3.v4.min.js"></script>
+			<script type="text/javascript" charset="UTF-8" src="/practica-war/js/d3relationshipgraph/d3.relationshipgraph.js"></script>
+		</h:head>
+	
+		<h:body>
+			<div class="header"
+				style="margin-left: 10px !important; margin-right: 10px !important;">
+				<ui:include src="menu.xhtml" />
+				<ui:include src="menuAdmin.xhtml" />
+				
+			</div>
+		
+			<p:dialog style="overflow:hidden;background:transparent;box-shadow:none;border:0px;" position="right,bottom" width="0px" height="0px" widgetVar="statusDialog" modal="false" draggable="false" closable="false" resizable="false" showHeader="false">
+				<p:graphicImage value="/image/loading.gif" />
+			</p:dialog>
+
+			
+			<div class="clearfix">
+				<div class="body"
+					style="margin-left: 10px !important; margin-right: 10px !important;">
+					<ui:insert name="body" />
+					
+				</div>
+			</div>
+		
+			<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+		</h:body>
+	</html>
+</f:view>

@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" contentType="text/html">
+
+<html>
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<!-- Disabling cache in browser side -->
+	<meta http-equiv="pragma" content="no-cache" />
+	<meta http-equiv="cache-control" content="no-cache" />
+	<meta http-equiv="expires" content="0" />
+	
+	<title>Llamalo X</title>
+	<link rel="shortcut icon" href="#{request.contextPath}/favicon.ico" />
+	<link rel="stylesheet" type="text/css" href="/practica-war/css/style.css" />
+
+</h:head>
+
+<h:body >
+
+	<div class="header"
+		style="margin-left: 10px !important; margin-right: 10px !important;">
+		
+		
+		
+		<!-- INICIO AREA DE LOS MENSAJES -->
+
+		<p:growl id="growl" widgetVar="growlWV" globalOnly="false" showDetail="false" sticky="true"	autoUpdate="true">
+		</p:growl>			
+
+	</div>
+
+	<p:dialog style="overflow:hidden;background:transparent;box-shadow:none;border:0px;" position="right,bottom" width="100px" height="100px" widgetVar="statusDialog" modal="false" draggable="false" closable="false" resizable="false" showHeader="false">
+			<p:graphicImage value="/image/loading.gif" />
+	</p:dialog>
+
+	<div class="clearfix">
+		<div class="body"
+			style="margin-left: 10px !important; margin-right: 10px !important;">
+			<!-- Insertamos la página principal -->
+			<ui:insert name="body" />
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+	<!--<![CDATA[-->
+		function checkErrors(responseText) {
+			if (responseText.indexOf("&lt;error&gt;") > -1) {
+				PF('growlWV').renderMessage({"summary": "ERROR EN LA PETICION",
+                    "detail": responseText,
+                    "severity":"error"});
+			}
+		}
+	<!--]]>-->
+	</script>
+	
+	
+	<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="checkErrors(arguments[1].responseText); PF('statusDialog').hide()"  />
+ 
+</h:body>
+	</html>
+</f:view>

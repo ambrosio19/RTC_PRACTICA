@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration PUBLIC
+  "-//APACHE//DTD LOG4J 1.2//EN" "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p %c{1} - %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="FICHERO" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/logs/llamaloX/fichero.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p [%c] - %m%n" />
+		</layout>
+	</appender>
+
+
+	<appender name="SELENIUM_TEST" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/logs/llamaloX/selenium_test.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p [%c] - %m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="LOGIN" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/logs/llamaloX/LlamaloX_LOGIN.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p [%c] - %m%n" />
+		</layout>
+	</appender>
+	<appender name="JUNIT_TEST" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/logs/llamaloX/LlamaloX_JUnit_Test.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p [%c] - %m%n" />
+		</layout>
+	</appender>
+	<appender name="NOTIFICACION_SERVICES" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/logs/llamaloX/LlamaloX_Notificacion_Services.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p [%c] - %m%n" />
+		</layout>
+	</appender>
+
+	<category name="net.atos.practica.controllers" additivity="false">
+		<priority value="INFO" />
+		<appender-ref ref="FICHERO" />
+	</category>
+
+	<category name="net.atos.practica.negocio" additivity="false">
+		<priority value="INFO" />
+		<appender-ref ref="FICHERO" />
+	</category>
+	
+	<category name="net.atos.practica.dto" additivity="false">
+		<priority value="INFO" />
+		<appender-ref ref="FICHERO" />
+	</category>
+
+	<category name="net.atos.practica.dao" additivity="false">
+		<priority value="INFO" />
+		<appender-ref ref="FICHERO" />
+	</category>
+
+	<category name="net.atos.practica.seleniumTest">
+		<priority value="DEBUG" />
+		<appender-ref ref="SELENIUM_TEST" />
+	</category>
+	
+	<category name="net.atos.practica.notificacion_services">
+		<priority value="DEBUG" />
+		<appender-ref ref="NOTIFICACION_SERVICES" />
+	</category>
+	<category name="net.atos.practica.junit_test">
+		<priority value="JUNIT_TEST" />
+		<appender-ref ref="JUNIT_TEST" />
+	</category>
+	<category name="org.springframework.test.context.junit4.SpringJUnit4ClassRunner">
+		<priority value="DEBUG" />
+		<appender-ref ref="JUNIT_TEST" />
+	</category>
+
+	<logger name="net.atos.practica.controllers.LoginController">
+		<level value="INFO" />
+		<appender-ref ref="LOGIN" />
+	</logger>
+	
+
+	<root>
+		<priority value="OFF" />
+		<appender-ref ref="CONSOLE" />
+	</root>
+
+</log4j:configuration>

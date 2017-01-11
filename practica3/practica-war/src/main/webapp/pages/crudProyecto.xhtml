@@ -1,0 +1,217 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body">
+		<!-- NO BORRES EL GROWL -->
+		<p:growl globalOnly="true" severity="info" id="growlProyecto"
+			showDetail="true" autoUpdate="true" life="2000" />
+
+		<h:outputScript library="js" name="calendar_es.js" />
+		<h:form id="filtros">
+
+			<p:panel header="Buscar Proyectos">
+				<p:panelGrid columns="8">
+					<p:outputLabel for="filtroWBS" value="WBS:" />
+					<p:inputText required="false" id="filtroWBS"
+						value="#{proyectoController.filtro.wbs}" />
+					<p:outputLabel for="filtroNombre" value="Nombre:" />
+					<p:inputText required="false" id="filtroNombre"
+						value="#{proyectoController.filtro.nombre}" />
+					
+					<p:outputLabel for="fechaIni" value="Fecha de inicio:" />
+        					<p:calendar navigator="true" locale="es" id="fechaIni"
+							value="#{proyectoController.filtro.fechaInicio}"
+							yearRange="c-10:c+10" />
+						
+						<p:outputLabel for="fechaFin" value="Fecha de fin:" />
+        				<p:calendar navigator="true" locale="es" id="fechaFin"
+							value="#{proyectoController.filtro.fechaFin}"
+							yearRange="c-10:c+10" />
+				</p:panelGrid>
+				<p:panelGrid columns="2">
+					<p:commandButton id="buscar" value="Buscar"
+						actionListener="#{proyectoController.buscarPaginando}"
+						update="listaResultados" />
+					<p:commandButton id="nuevo" value="Nuevo"
+						actionListener="#{proyectoController.nuevoProyecto}"
+						update="detalleForm" oncomplete="PF('detalle').show()" />
+				</p:panelGrid>
+			</p:panel>
+
+			<p:panel header="Resultados de la Búsqueda de Proyectos">
+				<p:dataTable id="listaResultados"
+					emptyMessage="No se han encontrado proyectos"
+					value="#{proyectoController.lazyModelListProyectos}" 
+					var="proyecto" 
+					sortMode="single" 
+					selectionMode="single"
+					selection="#{proyectoController.proyectoSelec}" 
+					rows="10"
+					rowsPerPageTemplate="10,25,50"
+					paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					paginator="true"
+					lazy="true"
+					sortBy="#{proyecto.wbs}"
+					>
+
+					<p:ajax event="rowSelect" update="detalleForm:detalleFragment"
+						listener="#{proyectoController.listarColaboradores}"
+						oncomplete="PF('detalle').show()" />
+
+					<p:ajax event="rowToggle"
+						listener="#{proyectoController.listarColaboradoresPro(proyecto.wbs)}" />
+
+					<f:facet name="{Exporters}">
+						<h:commandLink id="reportXls">
+							<h:graphicImage value="/image/excel.png" />
+							<p:dataExporter type="xls" target="listaResultados"
+								fileName="Proyecto" encoding="ISO-8859-1" />
+						</h:commandLink>
+						<h:commandLink id="reportPdf">
+							<h:graphicImage value="/image/pdf.png" />
+							<p:dataExporter type="pdf" target="listaResultados"
+								fileName="Proyecto" encoding="ISO-8859-1" />
+						</h:commandLink>
+
+					</f:facet>
+
+
+
+					<p:column exportable="false" style="width:16px">
+
+						<p:rowToggler id="desplegarFila" />
+					</p:column>
+
+					<p:column headerText="WBS" sortBy="#{proyecto.wbs}">
+						<h:outputText value="#{proyecto.wbs}" />
+					</p:column>
+					<p:column headerText="Proyecto" sortBy="#{proyecto.nombreProyecto}">
+						<h:outputText value="#{proyecto.nombreProyecto}" />
+					</p:column>
+					<p:column headerText="Fecha de Inicio"
+						sortBy="#{proyecto.fechaInicioPro}">
+
+						<h:outputText value="#{proyecto.fechaInicioPro}">
+							<f:convertDateTime timeZone="BST" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Fecha de Finalización"
+						sortBy="#{proyecto.fechaFinPro}">
+						<h:outputText value="#{proyecto.fechaFinPro}">
+							<f:convertDateTime timeZone="BST" pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:rowExpansion>
+						<p:panelGrid columns="4">
+							<p:dataTable var="colaborador"
+								emptyMessage="No se han encontrado colaboradores en este proyecto"
+								value="#{proyectoController.listaColaboradoresPro}" paginator="true"
+								rows="10">
+								<f:facet name="header">
+									Colaboradores del Proyecto 
+								</f:facet>
+								<p:column headerText="Apellidos "
+									sortBy="#{colaborador.primerApellido}">
+									<h:outputText
+										value="#{colaborador.primerApellido} #{colaborador.segundoApellido}" />
+								</p:column>
+								<p:column headerText="Nombre" sortBy="#{colaborador.nombre}">
+									<h:outputText value="#{colaborador.nombre}" />
+								</p:column>
+								<p:column headerText="email" sortBy="#{colaborador.email}">
+									<h:outputText value="#{colaborador.email}" />
+								</p:column>
+								<p:column headerText="Nivel GCM"
+									sortBy="#{colaborador.nivelGCM}">
+									<h:outputText value="#{colaborador.nivelGCM}" />
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+					</p:rowExpansion>
+
+				</p:dataTable>
+
+
+
+			</p:panel>
+		</h:form>
+
+		<h:form id="detalleForm">
+			<p:dialog id="dialogoDetalle" widgetVar="detalle" resizable="false"
+				header="Introduzca los datos del Proyecto" modal="true">
+				<p:fragment id="detalleFragment">
+
+					<p:messages globalOnly="true" severity="fatal" id="messages"
+						showDetail="true" autoUpdate="true" closable="true" />
+
+					<h:panelGrid columns="2" cellpadding="5">
+
+						<p:outputLabel for="wbs" value="WBS:" />
+						<p:inputText required="true" id="wbs"
+							value="#{proyectoController.proyectoSelec.wbs}"
+							disabled="#{proyectoController.proyectoSelec.wbs != null }" />
+
+						<p:outputLabel for="nombreProyecto" value="Nombre:" />
+						<p:inputText required="true" id="nombreProyecto"
+							value="#{proyectoController.proyectoSelec.nombreProyecto}" />
+						<p:outputLabel for="fechaInicio" value="Fecha de Inicio:" />
+						<p:calendar navigator="true" required="true" locale="es"
+							id="fechaInicio" yearRange="c-10:c+10"
+							value="#{proyectoController.proyectoSelec.fechaInicioPro}" />
+
+						<p:outputLabel for="fechaFin" value="Fecha de finalización" />
+						<p:calendar navigator="true" locale="es" id="fechaFin"
+							value="#{proyectoController.proyectoSelec.fechaFinPro}"
+							yearRange="c-10:c+10" />
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="1">
+						<p:pickList id="proyectoPickList"
+							value="#{proyectoController.listaDual}"
+							rendered="#{proyectoController.proyectoSelec.wbs != null}"
+							var="colaborador" effect="bounce" itemValue="#{colaborador}"
+							itemLabel="#{colaborador.codigo} - #{colaborador.nombre}"
+							showSourceControls="true" showTargetControls="true"
+							showCheckbox="false" responsive="true" showSourceFilter="true"
+							showTargetFilter="true" filterMatchMode="contains"
+							converter="entityConverter">
+
+							<f:facet name="sourceCaption">Todos los colaboradores</f:facet>
+							<f:facet name="targetCaption">Colaboradores del proyecto</f:facet>
+
+						</p:pickList>
+					</h:panelGrid>
+
+					<h:panelGrid columns="3">
+						<p:commandButton id="guardarNuevo" value="Guardar"
+							actionListener="#{proyectoController.crear}"
+							update="detalleFragment,messages,growlProyecto,filtros:listaResultados"
+							rendered="#{proyectoController.proyectoSelec.wbs == null}"
+							oncomplete="if (args &amp;&amp; !args.validationFailed ) PF('detalle').hide()" />
+						<p:commandButton id="modificar" value="Modificar"
+							actionListener="#{proyectoController.actualizar}"
+							update="detalleFragment,messages,growlProyecto,filtros:listaResultados"
+							rendered="#{proyectoController.proyectoSelec.wbs != null}"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()" />
+						<p:commandButton id="eliminar" value="Borrar"
+							actionListener="#{proyectoController.borrar}"
+							update="detalleFragment,messages,growlProyecto,filtros:listaResultados"
+							rendered="#{proyectoController.proyectoSelec.wbs != null}"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()" />
+						<p:commandButton id="cancelar" value="Cancelar" immediate="true"
+							oncomplete="PF('detalle').hide()">
+							<p:resetInput target="detalleForm" />
+						</p:commandButton>
+					</h:panelGrid>
+				</p:fragment>
+
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

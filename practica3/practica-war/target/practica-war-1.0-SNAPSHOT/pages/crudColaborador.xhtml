@@ -1,0 +1,145 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body">
+		<div class="ui-fluid">
+			<div class="ui-grid ui-grid-responsive">
+				<h:form id="principal" enctype="multipart/form-data">
+					<p:panel id="panelPrincipal" header="Datos personales: ">
+						<p:panelGrid columns="2">
+							<p:panelGrid columns="1" responsive="true">
+								<p:graphicImage id="avatar"
+									url="#{colaboradorController.colaborador.getFoto()}"
+									styleClass="fotoUsuario" cache="false" />
+							</p:panelGrid>
+							<p:panelGrid columns="2" cellpadding="5" responsive="true">
+								<h:outputText value="Identificador: " />
+								<h:outputText
+									value="#{colaboradorController.colaborador.codigo}" />
+								<h:outputText value="Nombre: " />
+								<h:outputText
+									value="#{colaboradorController.colaborador.nombre}" />
+								<h:outputText value="Primer Apellido: " />
+								<h:outputText
+									value="#{colaboradorController.colaborador.primerApellido}" />
+								<h:outputText value="Segundo Apellido: " />
+								<h:outputText
+									value="#{colaboradorController.colaborador.segundoApellido}" />
+								<h:outputText value="DNI: " />
+								<h:outputText value="#{colaboradorController.colaborador.nif}" />
+								<h:outputText value="Fecha de nacimiento: " />
+								<h:outputText
+									value="#{colaboradorController.colaborador.fechaNacimiento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" timeZone="BST" />
+								</h:outputText>
+								<h:outputText value="Teléfono: " />
+								<h:outputText
+									value="#{colaboradorController.colaborador.telefono}" />
+								<h:outputText value="Correo electrónico: " />
+								<h:outputText
+									value="#{colaboradorController.colaborador.email}" />
+										
+								<p:commandButton id="actualizarDatos" value="Modificar Datos"
+									update="modificar" oncomplete="PF('detalle').show()" />
+										
+								<p:commandButton id="modiPass" value="Modificar Contraseña"
+									oncomplete="PF('pass').show()" />
+							</p:panelGrid>
+						</p:panelGrid>
+						<p:panelGrid style="width:20%;" columns="1">
+							<p:fileUpload label="Cambiar foto"
+								invalidFileMessage="Tipo de archivo incorrecto"
+								invalidSizeMessage="Tamaño máximo (100KB) superado"
+								fileUploadListener="#{colaboradorController.subirFoto}"
+								dragDropSupport="false" skinSimple="true" mode="advanced"
+								auto="true" sizeLimit="600000"
+								allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+								update="mensajeInferior,avatar"
+								oncomplete="setTimeout(function() { $('[id$=mensajeInferior]').hide(500); }, 2000);">
+							</p:fileUpload>
+							<p:messages id="mensajeInferior" closable="false" severity="warn, info"/>
+						</p:panelGrid>
+					</p:panel>
+				</h:form>
+			</div>
+
+			<div>
+				<h:form id="modificar">
+					<p:dialog responsive="true" id="dialogoDetalle" widgetVar="detalle"
+						resizable="false" header="Información personal" modal="true">
+						<p:fragment id="detalleFragment">
+							<p:messages id="messageModificar" severity="error, fatal" />
+							<h:panelGrid columns="2" cellpadding="5">
+								<p:outputLabel for="nombre" value="Nombre:" />
+								<p:inputText required="true" id="nombre"
+									value="#{colaboradorController.colaborador.nombre}" />
+								<p:outputLabel for="primerApellido" value="Primer apellido:" />
+								<p:inputText required="true" id="primerApellido"
+									value="#{colaboradorController.colaborador.primerApellido}" />
+								<p:outputLabel for="segundoApellido" value="Segundo apellido:" />
+								<p:inputText id="segundoApellido"
+									value="#{colaboradorController.colaborador.segundoApellido}" />
+								<p:outputLabel for="nif" value="DNI:" />
+								<p:inputText required="true" id="nif"
+									value="#{colaboradorController.colaborador.nif}" />
+								<p:outputLabel for="fechaNacimiento"
+									value="Fecha de nacimiento:" />
+								<p:calendar locale="es" required="true" id="fechaNacimiento"
+									maxdate="new Date()"
+									value="#{colaboradorController.colaborador.fechaNacimiento}"
+									navigator="true" yearRange="c-100:c+100" />
+								<p:outputLabel for="telefono" value="Teléfono:" />
+								<p:inputText required="true" id="telefono"
+									value="#{colaboradorController.colaborador.telefono}" />
+								<p:outputLabel for="email" value="Correo electrónico:" />
+								<p:inputText required="true" id="email"
+									value="#{colaboradorController.colaborador.email}"
+									validatorMessage="El correo ingresado es incorrecto">
+									<f:validateRegex
+										pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+								</p:inputText>
+
+								<p:commandButton id="modificaDatos" value="Guardar"
+									actionListener="#{colaboradorController.actualizarColaborador}"
+									update="principal, messageModificar"
+									oncomplete="if(args &amp;&amp; !args.validationFailed) PF('detalle').hide()" />
+								<p:commandButton id="cancelaModifica" value="Cancelar"
+									oncomplete="PF('detalle').hide()" />
+							</h:panelGrid>
+						</p:fragment>
+					</p:dialog>
+				</h:form>
+
+				<p:dialog responsive="true" id="password" widgetVar="pass"
+					resizable="false" header="Cambio de contraseña" modal="true">
+					<h:form id="modificarPass">
+						<p:fragment id="passFragment">
+							<p:messages id="messagesDialog" severity="fatal" />
+							<h:panelGrid columns="2" id="matchGrid" cellpadding="5">
+								<p:outputLabel for="oldPass" value="Contraseña actual:" />
+								<p:inputText required="true" id="oldPass"
+									value="#{colaboradorController.passActual}" />
+								<p:outputLabel for="newPass1" value="Nueva contraseña:" />
+								<p:password required="true" id="newPass1"
+									value="#{colaboradorController.newPass1}" />
+								<p:outputLabel for="newPass2"
+									value="Repetir la nueva contraseña:" />
+								<p:password required="true" id="newPass2"
+									value="#{colaboradorController.newPass2}" />
+								<p:commandButton id="modificaPass" value="Guardar"
+									update="matchGrid, messagesDialog"
+									actionListener="#{colaboradorController.verificarPass}"
+									oncomplete="if(args &amp;&amp; !args.validationFailed) PF('pass').hide()" />
+								<p:commandButton id="cancelaPass" value="Cancelar"
+									oncomplete="PF('pass').hide()" />
+							</h:panelGrid>
+						</p:fragment>
+					</h:form>
+				</p:dialog>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

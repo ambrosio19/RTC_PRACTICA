@@ -1,0 +1,160 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+	
+		<ui:define name="body" >
+
+				<h:form id="form">
+				<p:growl id="msgs" showDetail="true" />
+  				  <p:panel id="buscarDatos" header="Buscar Datos">
+        		   <h:panelGrid columns="12"  cellpadding="8">
+				   <p:outputLabel for="promocion" value="Promoción: "/>	
+				    <p:selectOneMenu id="promocion" value="#{generacionDeInformacionController.filtroBusqueda.nombrePromocion}" converter="entityConverter" label="prom"
+                              filter="true" footerText="contains" filterMatchMode="contains" panelStyle="width:250px">
+                              <f:selectItem itemLabel="Seleccione uno" itemValue="" />
+           			 <f:selectItems value="#{generacionDeInformacionController.promociones}" var="promo" itemLabel="#{promo.nombrePromocion}" itemValue="#{promo.nombrePromocion}"/>
+        			</p:selectOneMenu>
+				   
+				   <p:outputLabel for="gcm" value="GCM: " />
+				   <p:selectOneMenu required="true" id="gcm" value="#{generacionDeInformacionController.gcmCrud}" converter="entityConverter" editable="false">
+            				<f:selectItems value="#{generacionDeInformacionController.nivelesGCM}" var="nivelGCM" itemLabel="#{nivelGCM}" itemValue="#{nivelGCM}"/>
+       				</p:selectOneMenu>
+				
+					
+				   <p:outputLabel for="proyect" style="margin-left:25%" value="Proyecto: "/>
+				    <p:selectOneMenu id="proyect" value="#{generacionDeInformacionController.filtroBusqueda.wbs}" label="project"
+                              filter="true" footerText="contains" filterMatchMode="contains" panelStyle="width:250px" converter="entityConverter">
+           			 <f:selectItem itemLabel="Todos" itemValue="" />
+           			 <f:selectItems  value="#{generacionDeInformacionController.proyectos}" var="proyecto" itemLabel="#{proyecto.nombreProyecto}" itemValue="#{proyecto.wbs}"/>
+        			</p:selectOneMenu>	
+        		
+		
+				   
+				   <p:outputLabel for="cap" style="margin-left:10%" value="Capacidad: "/>	
+				   <p:selectOneMenu id="cap" value="#{generacionDeInformacionController.filtroBusqueda.nombreCapacidad}" label="promo"
+                              filter="true" footerText="contains" filterMatchMode="contains" panelStyle="width:250px" converter="entityConverter">
+           			 <f:selectItem itemLabel="Todas" itemValue="" />
+           			 <f:selectItems  value="#{generacionDeInformacionController.capacidades}" var="capacidad" itemLabel="#{capacidad.nombreCapacidad}" itemValue="#{capacidad.nombreCapacidad}"/>
+        			</p:selectOneMenu>
+				   </h:panelGrid>
+				
+				   <p:commandButton id="busca" value="Buscar" update="colaboradores" actionListener="#{generacionDeInformacionController.buscar}"/>
+			
+  	  		</p:panel>
+  	  		
+  	  		
+  	  		<p:panel header="Resultados de la Búsqueda">
+					<p:dataTable id="colaboradores" var="colaborador" value="#{generacionDeInformacionController.listaResultado}" 
+				 				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                 				paginator="true" rows="10" style="margin-bottom:20px">
+				 
+				    <f:facet name="header">
+				        <p:commandButton id="toggler" type="button" value="Columnas" style="float:right" icon="ui-icon-calculator" />
+				        <p:columnToggler datasource="colaboradores" trigger="toggler">
+				        	<p:ajax event="toggle" listener="#{generacionDeInformacionController.onToggle}" />
+				        </p:columnToggler>
+				    </f:facet>
+
+			            
+			  <f:facet name="{Exporters}">
+						<h:commandLink>
+			                <p:graphicImage id="excel" value="/image/excel.png" width="24"/>
+			                <p:dataExporter type="xls" target="colaboradores" fileName="Colaboradores" encoding="ISO-8859-1" preProcessor="#{generacionDeInformacionController.preProcessXLS}" postProcessor="#{generacionDeInformacionController.postProcessXLS}"/>
+			            </h:commandLink>
+
+        			</f:facet>  
+				    
+				     <p:column headerText="DAS" sortBy="#{colaborador.codigo}" visible="#{generacionDeInformacionController.listaVisible[0]}" exportable="#{generacionDeInformacionController.listaVisible[0]}">
+				        <h:outputText value="#{colaborador.codigo}" />
+				    </p:column>
+				 
+				     <p:column headerText="Nombre" sortBy="#{colaborador.nombre}" visible="#{generacionDeInformacionController.listaVisible[1]}" exportable="#{generacionDeInformacionController.listaVisible[1]}">
+				        <h:outputText value="#{colaborador.nombre}" />
+				    </p:column>
+				     <p:column headerText="Apellidos" sortBy="#{colaborador.primerApellido}" visible="#{generacionDeInformacionController.listaVisible[2]}" exportable="#{generacionDeInformacionController.listaVisible[2]}">
+				        <h:outputText value="#{colaborador.primerApellido} #{colaborador.segundoApellido}" />
+				    </p:column>
+				     <p:column headerText="Email" visible="#{generacionDeInformacionController.listaVisible[3]}" exportable="#{generacionDeInformacionController.listaVisible[3]}">
+				        <h:outputText value="#{colaborador.email}" />
+				    </p:column>
+				    
+				    <p:column headerText="Teléfono" visible="#{generacionDeInformacionController.listaVisible[4]}" exportable="#{generacionDeInformacionController.listaVisible[4]}">
+				        <h:outputText value="#{colaborador.telefono}" />
+				    </p:column>
+				    <p:column headerText="Fecha de nacimiento" visible="#{generacionDeInformacionController.listaVisible[5]}" exportable="#{generacionDeInformacionController.listaVisible[5]}">
+				        <h:outputText value="#{colaborador.fechaNacimiento}">
+				        	<f:convertDateTime timeZone="BST" pattern="dd/MM/yyyy" />
+				        </h:outputText>
+				    </p:column>
+				    <p:column headerText="Fecha de alta" sortBy="#{colaborador.fechaAlta}" visible="#{generacionDeInformacionController.listaVisible[6]}" exportable="#{generacionDeInformacionController.listaVisible[6]}">
+				        <h:outputText value="#{colaborador.fechaAlta}">
+				        	<f:convertDateTime timeZone="BST" pattern="dd/MM/yyyy" />
+				        </h:outputText>
+				    </p:column>
+				    
+				    <p:column headerText="Fecha de baja" visible="#{generacionDeInformacionController.listaVisible[7]}" exportable="#{generacionDeInformacionController.listaVisible[7]}">
+				        <h:outputText value="#{colaborador.fechaBaja}">
+				        	<f:convertDateTime timeZone="BST" pattern="dd/MM/yyyy" />
+				        </h:outputText>
+				    </p:column>
+				    
+				    <p:column headerText="Fecha de inicio del proyecto" sortBy="#{colaborador.fechaInicioProyecto}" visible="#{generacionDeInformacionController.listaVisible[8]}" exportable="#{generacionDeInformacionController.listaVisible[8]}">
+				        <h:outputText value="#{colaborador.fechaInicioProyecto}">
+				        	<f:convertDateTime timeZone="BST" pattern="dd/MM/yyyy" />
+				        </h:outputText>
+				    </p:column>
+				    
+				    <p:column headerText="Fecha de fin del proyecto" visible="#{generacionDeInformacionController.listaVisible[9]}" exportable="#{generacionDeInformacionController.listaVisible[9]}">
+				        <h:outputText value="#{colaborador.fechaFinProyecto}">
+				        	<f:convertDateTime timeZone="BST" pattern="dd/MM/yyyy" />
+				        </h:outputText>
+				    </p:column>
+				    
+				    <p:column headerText="GCM" sortBy="#{colaborador.nivelGCM}" visible="#{generacionDeInformacionController.listaVisible[10]}" exportable="#{generacionDeInformacionController.listaVisible[10]}">
+				        <h:outputText value="#{colaborador.nivelGCM}" />
+				    </p:column>
+				    
+				    <p:column headerText="Salario" visible="#{generacionDeInformacionController.listaVisible[11]}" exportable="#{generacionDeInformacionController.listaVisible[11]}">
+				        <h:outputText value="#{colaborador.sba}" />
+				    </p:column>
+				   
+				    <p:column headerText="Foto" visible="#{generacionDeInformacionController.listaVisible[12]}" exportable="#{generacionDeInformacionController.listaVisible[12]}">
+				        <p:graphicImage value="#{colaborador.foto}" width="40%" height="55%"/>
+				    </p:column>
+				  
+				  <p:column headerText="Proyecto" sortBy="#{colaborador.proyecto.nombreProyecto}" visible="#{generacionDeInformacionController.listaVisible[13]}" exportable="#{generacionDeInformacionController.listaVisible[13]}">
+				        <h:outputText value="#{colaborador.proyecto.nombreProyecto}" />
+				    </p:column>
+				    
+				    <p:column headerText="Rol" sortBy="#{colaborador.rol.nombreRol}" visible="#{generacionDeInformacionController.listaVisible[14]}" exportable="#{generacionDeInformacionController.listaVisible[14]}">
+				        <h:outputText value="#{colaborador.rol.nombreRol}" />
+				    </p:column>
+				    
+				    <p:column headerText="Estatus" sortBy="#{colaborador.estatus.nombreEstatus}" visible="#{generacionDeInformacionController.listaVisible[15]}" exportable="#{generacionDeInformacionController.listaVisible[15]}">
+				        <h:outputText value="#{colaborador.estatus.nombreEstatus}" />
+				    </p:column>
+				    
+				    <p:column headerText="Categoría Profesional" sortBy="#{colaborador.categoriaPro.nombreCategoriaPro}" visible="#{generacionDeInformacionController.listaVisible[16]}" exportable="#{generacionDeInformacionController.listaVisible[16]}">
+				        <h:outputText value="#{colaborador.categoriaPro.nombreCategoriaPro}" />
+				    </p:column>
+				    
+				    <p:column headerText="Titulacion" sortBy="#{colaborador.titulacion.nombreTitulacion}" visible="#{generacionDeInformacionController.listaVisible[17]}" exportable="#{generacionDeInformacionController.listaVisible[17]}">
+				        <h:outputText value="#{colaborador.titulacion.nombreTitulacion}" />
+				    </p:column>
+				    
+				    <p:column headerText="Capacidad" sortBy="#{colaborador.capacidad.nombreCapacidad}" visible="#{generacionDeInformacionController.listaVisible[18]}" exportable="#{generacionDeInformacionController.listaVisible[18]}">
+				        <h:outputText value="#{colaborador.capacidad.nombreCapacidad}" />
+				    </p:column>
+					
+					<p:column headerText="Promocion" sortBy="#{colaborador.promocion.nombrePromocion}" visible="#{generacionDeInformacionController.listaVisible[19]}" exportable="#{generacionDeInformacionController.listaVisible[19]}">
+				        <h:outputText value="#{colaborador.promocion.nombrePromocion}" />
+				    </p:column>
+				    
+				 	</p:dataTable>
+			</p:panel>
+  	  		
+		</h:form>
+		</ui:define>
+	</ui:composition>

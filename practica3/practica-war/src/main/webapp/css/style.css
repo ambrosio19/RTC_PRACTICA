@@ -1,0 +1,505 @@
+
+name
+html {
+	overflow-y: scroll;
+}
+
+body {
+	background: url("../image/fondo.png");
+	margin: 0px;
+	overflow-x: hidden;
+}
+
+textarea { 
+    resize: none; 
+}
+ .mantenimiento{
+ 	margin-left: 10px; 
+ 	margin-right: 10px;
+ }
+.header {
+	text-align: left;
+}
+
+.footer {
+	text-align: center;
+}
+
+a img {
+	border: none;
+	text-decoration: none;
+}
+
+a:link {
+	text-decoration: none;
+}
+
+a:visited {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+a:active {
+	text-decoration: none;
+}
+
+a:disabled {
+	text-decoration: none;
+}
+
+.logo {
+	text-align: left;
+}
+
+.conversacion {
+	text-align: left;
+	font-size: 1.4em;
+	font-weight: bold;
+	width: 100%;
+	padding-left:50px;
+}
+
+.fecha_hora {
+	font-size: 11px;
+	color: #555555;
+	text-align: right;
+	white-space:nowrap;
+}
+
+.ui-dialog-content{
+    background: url("../image/background_panel.jpg") !important;
+    padding: 0,0,0,0!important;
+}
+
+.ui-selectonemenu{
+    width: 90% !important;
+}
+
+.ui-panel{
+	background: url("../image/background_panel.jpg") !important;
+}
+
+.ui-selectonemenu-label{
+    width: 100% !important;
+} 
+
+.ui-inputfield  {  
+	width: 90% !important;
+}
+
+.breadcrumbs {
+	font-size:0.7em;
+	font-weight:bold;
+}
+
+.breadcrumbsSeparator {
+	font-family:Arial;
+	font-size:13px;
+	font-weight:bold;
+	font-style:normal;
+	text-decoration:none;
+	color:#FF6501;
+}
+
+.ui-menubar,.ui-menu-child,.ui-menu {
+	background: url("../image/background_panel.jpg") !important;
+    border: 2px solid #4aa62a;
+}
+
+.ui-panel{
+	border: 2px solid #4aa62a;
+	margin-top: 5px;
+}
+
+.centeredMenuBar.ui-menubar {
+    text-align: left;
+}
+
+.centeredMenuBar .ui-menu-list {
+    display: inline-block;
+}
+
+.breadcrumbs:visited {
+	color:#FF6501;
+}
+
+.cabeceraTXT {
+	font-size: 0.8em;
+	padding-left:2px;
+}
+
+.youAreAt {
+	font-family: Arial;
+	font-size: 13px;
+	font-weight: bold;
+	font-style: normal;
+	text-decoration: none;
+	color: #999999;
+}
+
+.menuLink {
+	color:#FF6501 !important;
+    font-family: Arial;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.menuLink:visited {
+	color:#FF6501 !important;
+}
+
+.working2nd {
+	bottom: 0;
+	color: #000;
+	font-size: 12px;
+	font-weight: bold;
+	height: 12pt;
+	position: fixed;
+	right: 0;
+	width: 130px;
+	z-index: 100000000;
+	border: 1px solid #19C;
+	border-bottom-width: 0;
+	border-right-width: 0;
+	text-align: center;
+	vertical-align: middle;
+	height: 14px
+}
+
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+.clearfix {
+	display: inline-block;
+}  /* for IE/Mac */
+
+.clearfix {
+	zoom: 1;
+	display: block;
+}
+
+.error {
+	float: left;
+	padding: 5px;
+}
+
+.errors {
+	color: #FF0000 !important;
+}
+
+.required {
+	color: #FF0000 !important;
+}
+
+img.errors {
+	padding-right: 5px;
+}
+
+.errors input,.errors textarea,.errors select {
+	border: 1px solid red !important;
+}
+
+input {
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	border-radius: 4px;		
+}
+
+select {
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	border-radius: 4px;		
+}
+
+input[disabled='disabled'] {
+	background:#DDDDDD;
+	cursor:default; 
+}
+
+.soloLectura {
+	background:#DDDDDD !important;
+	cursor:default;
+	tabindex:-1;
+}
+
+input[readonly='readonly'] {
+	background:#DDDDDD;
+	cursor:default;
+	tabindex:-1;
+}
+
+input[type='button'][readonly='readonly'] {
+	background:#DDDDDD;
+	color: #AAAAAA;
+	cursor:default;
+	tabindex:-1;
+}
+
+textarea[disabled='disabled'] {
+	background:#DDDDDD;
+	cursor:default;
+}
+
+textarea[readonly='readonly'] {
+	background:#DDDDDD;
+	cursor:default;
+	tabindex:-1;
+}
+
+select[disabled="disabled"] {
+	background:#DDDDDD;
+	cursor:default;
+}
+
+select[readonly='readonly'],select[readonly=''] {
+ 	background:#DDDDDD;
+ 	cursor:default;
+} 
+
+select[disabled="disabled"] option[selected="selected"] {
+ 	background-color:#DDDDDD;
+}
+
+select[readonly='readonly'] option[selected="selected"],select[readonly=''] option[selected="selected"] {
+ 	background-color:#DDDDDD;
+}
+
+input:focus, select:focus{
+ 	background:#FFCC66;
+}
+
+.evenRow {
+   	background-color: #EEEEE0;
+}
+
+.oddRow {
+   	background-color: #f7f7f7;
+}
+
+.botonesGrid {
+	font-family: tahoma, arial, helvetica, sans-serif;
+	font-size: 10px;
+	font-color: #0D2D54;
+	border: 1px solid #AAC7F1;
+	background-color: #F7F5F6;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	border-radius: 4px;	
+	width: 15px; 
+	heigth: 15px;
+	padding: 3px 9px 4px 9px;
+}
+
+.botonesGridToggle {
+	background: url(../img/FondoBotonToggle.gif) repeat !important;
+}
+
+.botonesGrid:hover {
+	background: url(../img/FondoBoton.gif) repeat !important;
+}
+
+.botonesGrid:focus {
+	background-color: #07509D;
+	font-color: #FFFFFF;
+}
+
+.mediaOutput {
+	border: 1px solid #AAAAAA;
+}
+
+.panel-scroll {
+	border-style: none !important;
+}
+
+.rich-separator {
+	background-color:#BBBBBB;
+	background-image: none !important;
+}
+
+.name {
+    /* color: #999999;*/
+/* 	color: #333333;
+	font-family: Arial;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: bold;
+    text-decoration: none; */
+}
+.nameThin {
+    color: #999999;
+    font-family: Arial;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+input {
+    color: #000000;
+    font-family: 'Arial';
+    font-size: 13px;
+    font-style: normal;
+    font-weight: normal;
+    text-align: left;
+    text-decoration: none;	
+}
+
+.inputCabecera {
+	background-color: #DDDDDD;
+}
+
+.ui-widget {
+    font-size: 80%;
+   
+}
+.ui-widget .ui-widget {
+    font-size: 100%;
+}
+
+.ui-tooltip {
+	border: 0px;
+}
+
+.ui-selectonemenu-list-item {
+    font-size: 70% !important;
+    line-height: 1.0 !important;
+}
+
+/* .ui-menu .ui-menuitem-link {
+    cursor: pointer;
+    font-weight: 100 !important;
+    line-height: 10px !important;
+} */
+
+/* ui-selectonemenu-list-item {
+	font-size: 8px !important;
+}
+
+ui-selectonemenu-item {
+	font-size: 8px !important;
+} */
+
+
+.ui-panelgrid td {
+	border-width:0px !important;
+}
+.ui-panelgrid tr {
+	border-width:0px !important;
+	}
+
+.ui-tabs-panel {
+	border-width:1px !important;
+}
+
+.ui-state-modif {
+  	border: 1px solid #A9DB66 !important;
+  	color: #A9DB66 !important;
+}
+
+	
+.ui-widget-content tr{
+    background: none repeat scroll 0 0 transparent;
+}
+
+.ui-selectoneradio {
+	margin-top:-3px;
+}
+
+.ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td {
+  	white-space: normal !important;
+
+}
+
+.ui-datatableX tbody th, .ui-datatableX tbody td {
+  	padding: 2px 2px !important;
+  	font-size: 85%;
+}
+
+/* Esto es una solucion para que los checkbox no se muevan en IE8
+	Parece ser que el hecho de que los checbox (y radio button) se muevan
+	en IE8 es un bug de Primefaces. */
+.ui-chkbox-box.ui-widget.ui-corner-all.ui-state-default .ui-chkbox-icon {
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+.ui-radiobutton-box.ui-widget.ui-corner-all.ui-state-default .ui-radiobutton-icon {
+  	width: 16px;
+  	height: 16px;
+  	display: inline-block;
+}
+
+.ui-icon.large {
+	background-size: 384px 360px;
+	width: 24px;
+	height: 24px;
+	margin-top: 0;
+}
+
+.ui-icon-triangle-1-w.large {
+	background-position: -144px -24px;
+}
+
+.colorGauge {
+	display:block;
+	height: 4px;
+	width: 10px;
+}
+
+.colorGauge.top {
+	border-width: 1px 1px 0px 1px;
+	border-style: solid solid none solid;
+	border-color:blue;
+}
+
+.colorGauge.middle {
+	border-width: 0px 1px;
+	border-style: none solid;
+	border-color: blue;
+}
+
+.colorGauge.bottom {
+	border-width: 0px 1px 1px 1px;
+	border-style: none solid solid solid;
+	border-color: blue;
+} 
+
+.ui-widget-shadow {
+    margin: -8px 0 0 -8px;
+    padding: 8px;
+    background: #aaaaaa url("/prymon/javax.faces.resource/images/ui-bg_flat_0_aaaaaa_40x100.png.seam?ln=primefaces-redmond") 50% 50% repeat-x;
+    opacity: .30;
+    filter: Alpha(Opacity=30);
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+}
+
+.foto{
+	height:25px;
+	border-style: solid;
+    border-color: #0000ff;
+}
+
+.fc-month-button{
+	display:none;
+}
+
+.fc-agendaWeek-button{
+	display:none;
+} 
+
+.fc-agendaDay-button{
+	display:none;
+}

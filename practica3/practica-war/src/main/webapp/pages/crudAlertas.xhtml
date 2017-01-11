@@ -1,0 +1,147 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body" >
+		<h:form id="form">
+			<p:growl id="msgs" showDetail="true" />
+  				  <p:panel header="Buscar Alertas">
+        		   <h:panelGrid columns="6" cellpadding="5">
+						<p:outputLabel for="alertas" value="Nombre:" />
+						<p:inputText id="alertas" value="#{alertasController.filtroAlertas.alerta}"/>
+
+						
+						<p:outputLabel for="desde" value="Desde:" />
+        					<p:calendar navigator="true" locale="es" id="desde"
+							value="#{alertasController.filtroAlertas.fechaMinina}"
+							yearRange="c-10:c+10" />
+						
+						<p:outputLabel for="hasta" value="Hasta:" />
+        				<p:calendar navigator="true" locale="es" id="hasta"
+							value="#{alertasController.filtroAlertas.fechaMaxima}"
+							yearRange="c-10:c+10" />
+						
+						   	<p:commandButton id="buscar" value="Buscar" update="listaResultados" actionListener="#{alertasController.buscar}"/>
+							<p:commandButton id="nuevo" value="Nueva" update="modificar:modificaFragment" actionListener="#{alertasController.nuevaAlerta}" oncomplete="PF('modifica').show()">
+								<p:ajax update="modificar:modificaFragment" resetValues="true" />
+						   	</p:commandButton>							
+					</h:panelGrid>
+  	  			   </p:panel>
+		  	  		<p:panel header="Resultados de la Búsqueda de Alertas">
+				<p:dataTable emptyMessage="No se han encontrado alarmas" id="listaResultados" value="#{alertasController.alertas}" rowKey="#{alerta.nombreAlerta}" 
+								var="alerta" sortMode="single" selectionMode="single" selection="#{alertasController.alerta}" paginator="true" rows="10">
+								<p:ajax event="rowSelect" resetValues="true" update="modificar:modificaFragment" oncomplete="PF('modifica').show()"/>
+					
+					<p:column headerText="Alerta">
+						<h:outputText value="#{alerta.nombreAlerta}" />
+					</p:column>
+					
+					<p:column headerText="Descripcion">
+						<h:outputText value="#{alerta.descripcion}" />
+					</p:column>
+					
+					<p:column headerText="Fecha de fin">
+						<h:outputText value="#{alerta.fechaDeReferencia}">
+						<f:convertDateTime pattern="dd/MM/yyyy" timeZone="BST" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Periodo de preaviso">
+						<h:outputText value="#{alerta.periodoPreAviso}" />
+					</p:column>
+
+					<p:column headerText="Estado" sortBy="#{alerta.estado}">
+						<h:outputText rendered="#{alerta.estado == false}" value="Desactivada" />
+						<h:outputText rendered="#{alerta.estado == true}" value="Activada" />	
+					</p:column>
+
+
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		
+		
+			<h:form id="modificar">
+			<p:dialog id="dialogoModifica" dynamic="true" widgetVar="modifica" resizable="false" header="Introduzca los datos de la Alerta" modal="true">
+				<p:fragment id="modificaFragment">
+					<p:growl globalOnly="true" id="menseInfo" showDetail="true" autoUpdate="true" severity="info" life="2000" />
+					<p:messages globalOnly="true" id="mense" showDetail="true" autoUpdate="true" severity="fatal" closable="true" />
+
+					<h:panelGrid columns="2" cellpadding="4">
+							<p:outputLabel for="nombreAlerta" value="Nombre:" />
+							<p:inputText required="true" id="nombreAlerta" value="#{alertasController.alerta.nombreAlerta}"/>
+        			
+        					<p:outputLabel for="descp" value="Descripción:" />
+							<p:inputText id="descp" value="#{alertasController.alerta.descripcion}"/>
+        			
+        					<p:outputLabel for="aviso" value="Periodo de aviso:" />
+        					<p:selectOneMenu required="true" id="aviso" value="#{alertasController.alerta.periodoPreAviso}" converter="entityConverter" label="prom">
+                                <f:selectItem itemLabel="Seleccione los días" itemValue="" />
+           			 			<f:selectItems value="#{alertasController.numDias}" var="dias" itemLabel="#{dias}" itemValue="#{dias}"/>
+        					</p:selectOneMenu>
+					        				
+        					<p:outputLabel for="fechaFin" value="Fecha de finalización:" />
+        					<p:calendar required="true" navigator="true" locale="es" id="fechaFin"
+							value="#{alertasController.alerta.fechaDeReferencia}"
+							yearRange="c-10:c+10" />
+        				
+        					
+        					<p:outputLabel for="estado" value="Estado de la alerta:" />
+        					<p:inputSwitch id="estado" onLabel="Activada" offLabel="Desactivada" value="#{alertasController.alerta.estado}" />
+
+        			</h:panelGrid>
+  
+			  
+        			<h:panelGrid columns="4">		 
+        				     <p:commandButton id="guardar" value="Guardar" update="mense, menseInfo, form:listaResultados, modificaFragment, calendario:schedule" actionListener="#{alertasController.crear}" rendered="#{alertasController.alerta.nombreAlerta == null}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('modifica').hide()"/>
+        					 <p:commandButton id="modificar" value="Modificar" update="mense, menseInfo, form:listaResultados, modificaFragment, calendario:schedule" actionListener="#{alertasController.actualizar}" rendered="#{alertasController.alerta.nombreAlerta != null}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('modifica').hide()"/>	 
+        					 <p:commandButton id="borrar" value="Borrar" update="mense, menseInfo, form:listaResultados, calendario:schedule" actionListener="#{alertasController.borrar}" rendered="#{alertasController.alerta.nombreAlerta != null}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('modifica').hide()"/>		 
+        					 <p:commandButton id="cancela" value="Cancelar" oncomplete="PF('modifica').hide()"/>
+					</h:panelGrid>
+				</p:fragment>
+			</p:dialog>
+		</h:form>
+		
+		<h:form id="calendario">
+		<p:growl id="messages" showDetail="true" />
+		 <p:schedule id="schedule"  style="width:60%; margin-left:20%;" value="#{alertasController.eventModel}" widgetVar="myschedule" timeZone="GMT" locale="es" timeFormat=" " view="month" draggable="false">
+ 
+            <p:ajax event="dateSelect" resetValues="true" listener="#{alertasController.nuevaAlerta}" update="modificar:dialogoModifica, schedule" oncomplete="PF('modifica').show()" />
+            <p:ajax event="eventSelect" resetValues="true" listener="#{alertasController.onEventSelect}" update="modificar:dialogoModifica, schedule" oncomplete="PF('modifica').show()" />
+			
+        </p:schedule>
+        
+	</h:form>
+		<script type="text/javascript">
+
+		PrimeFaces.locales["es"] = {
+			    closeText: "Cerrar",
+			    prevText: "Anterior",
+			    nextText: "Siguiente",
+			    monthNames: ["Enero","Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+			    monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+			    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+			    dayNamesShort: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+			    dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+			    weekHeader: "Semana",
+			    firstDay: 1,
+			    isRTL: false,
+			    showMonthAfterYear: false,
+			    yearSuffix: "",
+			    timeOnlyTitle: "Solo hora",
+			    timeText: "Tiempo",
+			    hourText: "Hora",
+			    minuteText: "Minuto",
+			    secondText: "Segundo",
+			    currentText: "Fecha actual",
+			    ampm: false,
+			    month: "Mes",
+			    week: "Semana",
+			    day: "Día",
+			    allDayText : "Todo el día"
+			};
+		</script>
+	</ui:define>
+</ui:composition>

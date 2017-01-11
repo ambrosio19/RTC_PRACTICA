@@ -1,0 +1,169 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body">
+		<h:outputScript library="js" name="calendar_es.js" />
+		<h:form id="filtros">
+			<p:panel header="Buscar Colaboradores">
+				<p:panelGrid columns="2">
+					<p:outputLabel for="codigoFiltro" value="DAS:" />
+					<p:inputText required="false" id="codigoFiltro" value="#{colaboradorAdminController.filtro.codigo}"/>
+					<p:outputLabel for="nombreFiltro" value="Nombre:" />
+					<p:inputText required="false" id="nombreFiltro" value="#{colaboradorAdminController.filtro.nombre}"/>
+					
+					<p:commandButton id="buscar" value="Buscar" actionListener="#{colaboradorAdminController.buscar}" update="listaResultados" />
+					<p:commandButton id="nuevo" value="Nuevo" actionListener="#{colaboradorAdminController.nuevoColaborador}" update="detalleForm" oncomplete="PF('detalle').show()" />
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:panel header="Resultados de la Búsqueda de Colaboradores">
+				<p:dataTable id="listaResultados" value="#{colaboradorAdminController.lista}" rowKey="#{colaborador.codigo}" paginator="true" rows="10"
+					emptyMessage="No se han encontrado colaboradores" var="colaborador" sortMode="single" selectionMode="single" selection="#{colaboradorAdminController.colaboradorSelec}">
+		
+					<p:ajax event="rowSelect" update="detalleForm:detalleFragment" listener="#{colaboradorAdminController.guardarDatosActuales}" oncomplete="PF('detalle').show()"/>
+					
+					<p:column headerText="DAS" sortBy="#{colaborador.codigo}">
+						<h:outputText value="#{colaborador.codigo}" />
+					</p:column>
+					<p:column headerText="Nombre" sortBy="#{colaborador.nombre}">
+						<h:outputText value="#{colaborador.nombre}" />
+					</p:column>
+					<p:column headerText="Apellidos" sortBy="#{colaborador.primerApellido}">
+						<h:outputText value="#{colaborador.primerApellido} #{colaborador.segundoApellido}" />
+					</p:column>
+					<p:column headerText="Rol" sortBy="#{colaborador.rol}">
+						<h:outputText value="#{colaborador.rol.nombreRol}"/>
+					</p:column>
+					
+					<p:column headerText="Proyecto" sortBy="#{colaborador.proyecto.nombreProyecto}">
+						<h:outputText value="#{colaborador.proyecto.nombreProyecto}"/>
+					</p:column>
+
+					<p:column headerText="Capacidad" sortBy="#{colaborador.capacidad.nombreCapacidad}">
+						<h:outputText value="#{colaborador.capacidad.nombreCapacidad}"/>
+					</p:column>
+					<p:column headerText="Estatus" sortBy="#{colaborador.estatus.nombreEstatus}">
+						<h:outputText value="#{colaborador.estatus.nombreEstatus}"/>
+					</p:column>
+					<p:column headerText="Promoción" sortBy="#{colaborador.promocion.nombrePromocion}">
+						<h:outputText value="#{colaborador.promocion.nombrePromocion}"/>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		
+		<h:form id="detalleForm">
+			<p:dialog id="dialogoDetalle" focus="codigo" widgetVar="detalle" resizable="false" header="Introduzca los datos del Colaborador" modal="true">
+				<p:fragment id="detalleFragment">
+					<p:messages globalOnly="true" id="messages" showDetail="true" autoUpdate="true" closable="true" severity="fatal"/>
+					<p:growl globalOnly="true" id="messagesInfo" showDetail="true" autoUpdate="true" severity="info" life="2000" />
+					<h:panelGrid columns="2">
+						<h:panelGrid columns="1">
+							<p:graphicImage id="foto" value="#{colaboradorAdminController.colaboradorSelec.foto}" styleClass="fotoUsuario"/>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="2" cellpadding="5">
+								<p:outputLabel for="codigo" value="DAS:"/>
+								<p:inputText required="true" id="codigo" maxlength="7" value="#{colaboradorAdminController.colaboradorSelec.codigo}" disabled="#{colaboradorAdminController.colaboradorSelec.codigo != null}"/>
+								
+								<p:outputLabel for="nombre" value="Nombre:" />
+								<p:inputText required="true" widgetVar="nombreFocus" id="nombre" mindate="fechaAlta" value="#{colaboradorAdminController.colaboradorSelec.nombre}"/>
+								
+								<p:outputLabel for="primerApellido" value="Primer Apellido:" />
+								<p:inputText required="true" id="primerApellido" value="#{colaboradorAdminController.colaboradorSelec.primerApellido}"/>
+								
+								<p:outputLabel for="segundoApellido" value="Segundo Apellido:" />
+								<p:inputText id="segundoApellido" value="#{colaboradorAdminController.colaboradorSelec.segundoApellido}"/>
+								
+								<p:outputLabel for="nif" value="NIF:" />
+								<p:inputText required="true" id="nif" maxlength="9" value="#{colaboradorAdminController.colaboradorSelec.nif}"/>
+							
+								<p:outputLabel for="email" value="Email:" />
+								<p:inputText required="true" id="email" value="#{colaboradorAdminController.colaboradorSelec.email}" validatorMessage="Formato de email incorrecto">
+									<f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" /> 
+								</p:inputText>
+								
+		       					<p:outputLabel for="fechaNacimiento" value="Fecha Nacimiento:" />
+								<p:calendar locale="es" required="true" id="fechaNacimiento" navigator="true" value="#{colaboradorAdminController.colaboradorSelec.fechaNacimiento}" maxdate="new Date()" yearRange="c-100:c+100"/>
+		       					
+		       					<p:outputLabel for="telefono" value="Teléfono:" />
+								<p:inputText id="telefono" maxlength="9" value="#{colaboradorAdminController.colaboradorSelec.telefono}"/>
+		       					
+		       					<p:outputLabel for="pass" value="Password:" />
+								<p:inputText required="true" id="pass" value="#{colaboradorAdminController.colaboradorSelec.pwd}" />
+		       					
+		       					<p:outputLabel for="titulacion" value="Titulación:" />
+		       					<p:selectOneMenu required="true" id="titulacion" value="#{colaboradorAdminController.colaboradorSelec.titulacion}" converter="entityConverter" editable="false">
+		            				<f:selectItem itemValue="" itemLabel="Selecciona una titulacion"/>
+		            				<f:selectItems value="#{colaboradorAdminController.titulaciones}" var="titulacion" itemLabel="#{titulacion.nombreTitulacion}" itemValue="#{titulacion}"/>
+		       					</p:selectOneMenu>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="2" cellpadding="5">
+								<p:outputLabel for="fechaAlta" value="Fecha de alta:" />
+								<p:calendar locale="es" required="true" id="fechaAlta" navigator="true" value="#{colaboradorAdminController.colaboradorSelec.fechaAlta}" yearRange="c-10:c+10" />
+								
+								<p:outputLabel for="fechaBaja" value="Fecha de baja:" />
+								<p:calendar locale="es" id="fechaBaja" navigator="true" value="#{colaboradorAdminController.colaboradorSelec.fechaBaja}" yearRange="c-10:c+10" />			
+								
+								<p:outputLabel for="proyecto" value="Proyecto:" />
+								<p:selectOneMenu id="proyecto" value="#{colaboradorAdminController.colaboradorSelec.proyecto}" converter="entityConverter" editable="false">
+		            				<f:selectItem itemValue="" itemLabel="Selecciona un proyecto"/>
+		            				<f:selectItems value="#{colaboradorAdminController.proyectos}" var="proyecto" itemLabel="#{proyecto.nombreProyecto}" itemValue="#{proyecto}"/>
+		       					</p:selectOneMenu>
+		       					
+		       					<p:outputLabel for="estatus" value="Estatus:" />
+		       					<p:selectOneMenu required="true" id="estatus" value="#{colaboradorAdminController.colaboradorSelec.estatus}" converter="entityConverter" editable="false">
+		            				<f:selectItem itemValue="" itemLabel="Selecciona un estatus"/>
+		            				<f:selectItems value="#{colaboradorAdminController.listaEstatus}" var="estatus" itemLabel="#{estatus.nombreEstatus}" itemValue="#{estatus}"/>
+		       					</p:selectOneMenu>
+		       					
+		       					<p:outputLabel for="salario" value="Salario:" />
+								<p:inputText id="salario" value="#{colaboradorAdminController.colaboradorSelec.sba}"/>			
+								
+								<p:outputLabel for="rol" value="Rol:" />
+								<p:selectOneMenu required="true" id="rol" value="#{colaboradorAdminController.colaboradorSelec.rol}" converter="entityConverter" editable="false">
+		            				<f:selectItems value="#{colaboradorAdminController.roles}" var="rol" itemLabel="#{rol.nombreRol}" itemValue="#{rol}"/>
+		       					</p:selectOneMenu>
+		       					
+		       					<p:outputLabel for="promocion" value="Promocion:" />
+		       					<p:selectOneMenu id="promocion" value="#{colaboradorAdminController.colaboradorSelec.promocion}" converter="entityConverter" editable="false">
+		            				<f:selectItem itemValue="" itemLabel="Selecciona una promocion"/>
+		            				<f:selectItems value="#{colaboradorAdminController.promociones}" var="promocion" itemLabel="#{promocion.nombrePromocion}" itemValue="#{promocion}"/>
+		       					</p:selectOneMenu>
+		       					
+		       					<p:outputLabel for="capacidad" value="Capacidad:" />
+		       					<p:selectOneMenu id="capacidad" value="#{colaboradorAdminController.colaboradorSelec.capacidad}" converter="entityConverter" editable="false">
+		            				<f:selectItem itemValue="" itemLabel="Selecciona una capacidad"/>
+		            				<f:selectItems value="#{colaboradorAdminController.capacidades}" var="capacidad" itemLabel="#{capacidad.nombreCapacidad}" itemValue="#{capacidad}"/>
+		       					</p:selectOneMenu>
+		       					
+		       					<p:outputLabel for="nivelGCM" value="Nivel GCM:" />
+								<p:selectOneMenu required="true" id="nivelGCM" value="#{colaboradorAdminController.colaboradorSelec.nivelGCM}" converter="entityConverter" editable="false">
+		            				<f:selectItems value="#{colaboradorAdminController.nivelesGCM}" var="nivelGCM" itemLabel="#{nivelGCM}" itemValue="#{nivelGCM}"/>
+		       					</p:selectOneMenu>
+		       					
+		       					<p:outputLabel for="categoriaProfesional" value="Categoria Profesional:" />
+		       					<p:selectOneMenu required="true" id="categoriaProfesional" value="#{colaboradorAdminController.colaboradorSelec.categoriaPro}" converter="entityConverter" editable="false">
+		            				<f:selectItem itemValue="" itemLabel="Selecciona una categoría profesional"/>
+		            				<f:selectItems value="#{colaboradorAdminController.categoriasProfesionales}" var="categoriaPro" itemLabel="#{categoriaPro.nombreCategoriaPro}" itemValue="#{categoriaPro}"/>
+		       					</p:selectOneMenu>
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="3">
+						<p:commandButton id="guardarNuevo" value="Guardar" actionListener="#{colaboradorAdminController.insertar}" update="detalleFragment,filtros:listaResultados,messages,messagesInfo" rendered="#{colaboradorAdminController.colaboradorSelec.codigo == null}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()"/>
+						<p:commandButton id="modificar" value="Modificar" actionListener="#{colaboradorAdminController.actualizar}" update="detalleFragment,filtros:listaResultados,messages,messagesInfo" rendered="#{colaboradorAdminController.colaboradorSelec.codigo != null}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()"/>
+						<p:commandButton id="eliminar" value="Borrar" actionListener="#{colaboradorAdminController.borrar}" update="detalleFragment,filtros:listaResultados,messages" rendered="#{colaboradorAdminController.colaboradorSelec.codigo != null}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()"/>
+						<p:commandButton id="cancelar" value="Cancelar" immediate="true" oncomplete="PF('detalle').hide()"/>
+					</h:panelGrid>
+				</p:fragment>
+			</p:dialog>
+		</h:form>		
+	</ui:define>
+</ui:composition>

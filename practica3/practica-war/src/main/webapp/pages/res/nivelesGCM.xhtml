@@ -1,0 +1,55 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	template="/pages/visualizacionresultados.xhtml">
+
+
+	<ui:define name="grafico">
+
+		<div class="ui-fluid">
+			<div class="ui-g-12 ui-md-12 ui-lg-12">
+
+				<div class="ui-g-12 ui-md-4 ui-lg-4"></div>
+				<div class="ui-g-12 ui-md-4 ui-lg-4">
+					<div style="width: 200px; margin: 0 auto;">
+
+						<button
+							class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+							onclick="data1()">Niveles GCM</button>
+
+					</div>
+					<div  id="graph" style="margin: 0 auto;">
+						<h2></h2>
+					</div>
+				</div>
+				<div class="ui-g-12 ui-md-4 ui-lg-4"></div>
+				<script type="text/javascript">
+				var json1 =#{repNivelesGCM.jsonString};
+						var graph = d3.select('#graph').relationshipGraph({
+				            'maxChildCount': 25
+				            , 'valueKeyName': 'DAS'
+				            , 'thresholds': [600, 600, 600]
+				            , showTooltips: true
+				        });
+
+						function data1() {
+							
+							document.querySelector('h2').innerHTML = 'Niveles GCM';
+							 graph.data(json1);
+				        }
+						
+							data1();
+						
+						 
+				
+    </script>
+
+
+
+			</div>
+		</div>
+	</ui:define>
+
+</ui:composition>

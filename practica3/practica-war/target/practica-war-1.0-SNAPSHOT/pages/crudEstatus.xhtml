@@ -1,0 +1,133 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body" >
+		
+		<!-- NO BORRES EL GROWL -->
+		<p:growl id="growlPromocion" showDetail="true" life="5000" />
+			
+		<h:outputScript library="js" name="calendar_es.js" />
+		
+		<h:form id="filtros">		
+			<p:panel header="Buscar Estatus">
+				<p:panelGrid columns="2">
+					<p:outputLabel for="filtroNombre" value="Nombre:" />
+					<p:inputText required="false" id="filtroNombre" value="#{estatusController.filtro.nombreEstatus}" />
+					
+					<p:commandButton id="buscar" 
+									 value="Buscar" 
+									 actionListener="#{estatusController.buscar}" 
+									 update="listaResultados" />
+					<p:commandButton id="nuevo" value="Nuevo" actionListener="#{estatusController.nuevoEstatus}" update="detalleForm" oncomplete="PF('detalle').show()" />
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:panel header="Resultados de la Búsqueda de Estatus"
+					 widgetVar="panelBusqueda" >
+				<p:dataTable id="listaResultados" 
+							 emptyMessage="No se han encontrado estatus"
+							 value="#{estatusController.lista}" 
+							 rowKey="#{estatus.nombreEstatus}" 
+							 var="estatus" 
+							 sortMode="single" 
+							 selectionMode="single"
+							 paginator="true"
+							 rows="10"
+							 selection="#{estatusController.estatusSelec}">
+							 
+					<p:ajax event="rowSelect" update="detalleForm:detalleFragment" listener="#{estatusController.listarEstatus}" oncomplete="PF('detalle').show()" />
+					<p:ajax event="rowToggle" listener="#{estatusController.obtenerEstatusSeleccionado(estatus.idEstatus)}"/>
+
+					<p:column style="width:16px">
+						<p:rowToggler id="desplegarFila" />
+					</p:column>
+					
+					
+					<p:column headerText="Nombre" sortBy="#{estatus.nombreEstatus}">
+						<h:outputText value="#{estatus.nombreEstatus}" />
+					</p:column>
+					
+					
+					<p:rowExpansion>
+						<p:panelGrid columns="4">
+							<p:dataTable var="colaborador"
+								emptyMessage="No se han encontrado colaboradores en este Estatus"
+								value="#{estatusController.colaboradorEnEstatus}">
+								<f:facet name="header">
+									Colaboradores del Estatus
+								</f:facet>
+								<p:column headerText="Apellidos "
+									sortBy="#{colaborador.primerApellido}">
+									<h:outputText
+										value="#{colaborador.primerApellido} #{colaborador.segundoApellido}" />
+								</p:column>
+								<p:column headerText="Nombre" sortBy="#{colaborador.nombre}">
+									<h:outputText value="#{colaborador.nombre}" />
+								</p:column>
+								<p:column headerText="email" sortBy="#{colaborador.email}">
+									<h:outputText value="#{colaborador.email}" />
+								</p:column>
+		
+							</p:dataTable>
+						</p:panelGrid>
+					</p:rowExpansion>
+					
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		
+		<h:form id="detalleForm">		
+			<p:dialog id="dialogoDetalle" responsive="true" widgetVar="detalle" resizable="false" header="Introduzca los datos del Estatus" modal="true">
+				<p:messages globalOnly="true" id="msgs" showDetail="true" autoUpdate="true" closable="true" severity="fatal" />
+				<p:growl globalOnly="true" id="msgsInfo" showDetail="true" autoUpdate="true" severity="info" life="2000" />
+				<p:fragment id="detalleFragment">
+					<h:panelGrid columns="2" cellpadding="5">
+						<p:outputLabel for="nombre" value="Nombre:" />
+						<p:inputText required="true"
+									 id="nombre" 
+									 value="#{estatusController.estatusSelec.nombreEstatus}" />
+					</h:panelGrid>
+					
+					<h:panelGrid columns="1">
+						<p:pickList id="estatusPickList" value="#{estatusController.listaDual}" rendered="#{estatusController.estatusSelec != null}" var="colaborador" effect="bounce"
+                		itemValue="#{colaborador}" itemLabel="#{colaborador.codigo} - #{colaborador.nombre}" showSourceControls="true" showTargetControls="true" showCheckbox="false" responsive="true"
+                		showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="entityConverter">
+ 
+        					<f:facet name="sourceCaption">Todos los colaboradores</f:facet>
+        					<f:facet name="targetCaption">Colaboradores del estatus</f:facet>
+        					
+    					</p:pickList>
+					</h:panelGrid>
+
+					<h:panelGrid columns="3">
+						<p:commandButton id="guardarNuevo" value="Guardar"
+							actionListener="#{estatusController.insertar}"							
+							update="detalleFragment,filtros:listaResultados,msgsInfo"
+							rendered="#{estatusController.estatusSelec.nombreEstatus == null}"	
+							oncomplete="if (args &amp;&amp; !args.validationFailed ) PF('detalle').hide()" >
+						</p:commandButton>
+						<p:commandButton id="modificar" value="Modificar"
+							actionListener="#{estatusController.actualizar}"
+							update="detalleFragment,filtros:listaResultados,msgsInfo"
+							rendered="#{estatusController.estatusSelec.nombreEstatus != null}"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()" />
+						<p:commandButton id="eliminar" value="Borrar"
+							actionListener="#{estatusController.borrar}"
+							update="detalleFragment,filtros:listaResultados,msgs,msgsInfo"
+							rendered="#{estatusController.estatusSelec.nombreEstatus != null}"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()" />
+						<p:commandButton id="cancelar" value="Cancelar" immediate="true" oncomplete="PF('detalle').hide()" >
+							     <p:resetInput target=":detalleForm" />
+						</p:commandButton>
+					</h:panelGrid>
+				</p:fragment>
+
+			</p:dialog>
+
+		</h:form>
+						
+	</ui:define>
+</ui:composition>

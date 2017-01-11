@@ -1,0 +1,59 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/pages/visualizacionresultados.xhtml">
+
+	
+	<ui:define name="grafico">
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/data.js"></script>
+	<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+	
+	<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+	<script type="text/javascript">
+	$(function () {
+    // Create the chart
+    Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Capacidades'
+        },
+
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Usuarios'
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y}'
+                }
+            }
+        },
+
+        series: [{
+            name: 'Brands',
+            colorByPoint: true,
+            data: #{visualizarProyectos.data}
+        }]
+    });
+});
+	
+	</script>
+	
+
+	</ui:define>
+</ui:composition>

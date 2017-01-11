@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>LlamaloX</title>
+	<link rel="shortcut icon" href="/practica-war/image/shortcut_icon.png" />
+	<link rel="stylesheet" type="text/css" href="/practica-war/css/style.css" />
+</h:head>
+	 <h:body> 
+	<h:form>
+		
+		<p:spacer height="100"></p:spacer>
+		<div style="width:100%;" align="center">
+			<div>
+         		<h:graphicImage  url="/image/logo_llamaloX2.png" style="border:0; height:200px;" />
+			</div>
+			<div style="width:350px" >
+				<p:panel header="Llamalo X" align="center">
+				
+					<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+				
+					<p:panelGrid columns="2">
+						<p:outputLabel for="username" value="Usuario"/>
+						<p:inputText id="username" required="true" value="#{loginController.usuario}"/>
+					
+						<p:outputLabel for="password"  value="Contrase&ntilde;a" />
+						<p:password id="password" required="true" value="#{loginController.password}" />	
+					</p:panelGrid>
+				
+					<p:spacer height="25"></p:spacer>
+					<p:commandButton action="#{loginController.doLogin}" value="Login" ajax="false" />	
+				</p:panel>
+			</div>
+		</div>
+	</h:form>
+</h:body>
+</html>

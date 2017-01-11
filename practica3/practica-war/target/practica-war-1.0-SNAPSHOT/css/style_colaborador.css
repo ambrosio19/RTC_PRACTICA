@@ -1,0 +1,58 @@
+/*Style Colaborador*/
+.fotoUsuario {
+	border-style: solid;
+	border-color: rgba(147, 195, 205, 1);
+	border-radius: 10px;
+	width:150px;
+	max-width: 150px;
+	max-height: 100%;
+	margin-top:10%;
+	margin-left: 10%;
+	margin-right: 30%;
+}
+
+
+.panelInformacion {
+	padding-left: 3%;
+}
+
+.ui-fileupload-buttonbar {
+	background: transparent none;
+	border: none;
+	text-align: center;
+}
+
+.ui-fileupload-content {
+	/*display: none;*/
+	background: linear-gradient(90deg, #DCD8D8, #E6E1E1);
+	border-top-width: 0;
+	border-bottom-width: 0;
+	border-left-width: 0;
+	border-right-width: 0;
+}
+
+.ui-datatable .ui-row-toggler.ui-icon{
+	width: 20px;
+	height: 20px;
+	display: inherit;
+    text-indent: 0px;
+    background-image: none;
+}
+
+.ui-datatable .ui-row-toggler.ui-icon.ui-icon-circle-triangle-e,
+			  .ui-row-toggler.ui-icon.ui-icon-circle-triangle-s{
+	position:relative;
+}
+
+.ui-datatable .ui-row-toggler.ui-icon.ui-icon-circle-triangle-e::before{
+	content: "\f138";
+    font-family: FontAwesome;
+    font-size: 25px;
+}
+
+
+.ui-datatable .ui-row-toggler.ui-icon.ui-icon-circle-triangle-s::before{
+	content: "\f13a";
+    font-family: FontAwesome;
+    font-size: 25px;
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+	<!-- Configuracion de tareas programadas -->
+	<!--  0 0 5 ? * MON-FRI Lanzar a la 5 de lunes a viernes
+	      0 0/3 * * * ?     lanza cada 3 minutos    --> 
+	
+	<task:scheduled-tasks>
+	<!-- notificarServices definido en email-bean-context.xml y clase NotificacionServices -->
+		<task:scheduled ref="notificacionServices" method="notificarAlertas" cron="0 0/5 * * * ?" />
+		
+	</task:scheduled-tasks>
+	
+	
+</beans>

@@ -1,0 +1,111 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body" >
+		<h:form id="form">
+			<p:growl id="msgs" showDetail="true" />
+  				  <p:panel header="Buscar Capacidades">
+        		   <h:panelGrid columns="2" cellpadding="5">
+						<p:outputLabel for="capacidad" value="Nombre:" />
+						<p:inputText id="capacidad" value="#{capacidadController.filtro.nombreCapacidad}"/>
+						<p:commandButton id="busca" value="Buscar" update="listaResultados" actionListener="#{capacidadController.buscarPaginando}"/>
+						<p:commandButton id="nuevo" value="Nueva" update="modifica:modificaFragment" actionListener="#{capacidadController.nuevaCapacidad}" oncomplete="PF('modifica').show()"/>
+				</h:panelGrid>
+  	  		</p:panel>
+  	  		
+  	  		<p:panel header="Resultados de la Búsqueda de Capacidades">
+				<p:dataTable emptyMessage="No se han encontrado capacidades" 
+				id="listaResultados" 
+				value="#{capacidadController.lazyModelListCapacidades}" 
+				var="capacidad" 
+				sortMode="single" 
+				selectionMode="single" 
+				selection="#{capacidadController.nuevaCapacidad}" 
+				rows="10"
+				rowsPerPageTemplate="10,25,50"
+				paginatorTemplate="{RowsPerPageDropdown} {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+				paginator="true" 
+				lazy="true"
+				sortBy="#{capacidad.nombreCapacidad}"
+				>
+								
+								<p:ajax event="rowSelect" update="modifica:modificaFragment" listener="#{capacidadController.listarColaboradores}" oncomplete="PF('modifica').show()"/>
+								<p:ajax event="rowToggle" listener="#{capacidadController.obtenerCapacidadSeleccionada(capacidad.nombreCapacidad)}"/>
+
+					<p:column style="width:16px">
+						<p:rowToggler id="desplegarFila" />
+					</p:column>
+					
+					<p:column headerText="Capacidad" sortBy="#{capacidad.nombreCapacidad}">
+						<h:outputText value="#{capacidad.nombreCapacidad}" />
+					</p:column>
+					<p:column visible="false" headerText="Capacidad" sortBy="#{capacidad.idCapacidad}">
+						<h:outputText value="#{capacidad.idCapacidad}" />
+					</p:column>
+					
+					<p:rowExpansion>
+						<p:panelGrid columns="4">
+							<p:dataTable var="colaborador"
+								emptyMessage="No se han encontrado colaboradores en esta capacidad"
+								value="#{capacidadController.colaboradorEnCapacidad}" paginator="true" rows="10">
+								<f:facet name="header" >
+									Colaboradores de la Capacidad 
+								</f:facet>
+								<p:column headerText="Apellidos "
+									sortBy="#{colaborador.primerApellido}">
+									<h:outputText
+										value="#{colaborador.primerApellido} #{colaborador.segundoApellido}" />
+								</p:column>
+								<p:column headerText="Nombre" sortBy="#{colaborador.nombre}">
+									<h:outputText value="#{colaborador.nombre}" />
+								</p:column>
+								<p:column headerText="email" sortBy="#{colaborador.email}">
+									<h:outputText value="#{colaborador.email}" />
+								</p:column>
+								<p:column headerText="Nivel GCM"
+									sortBy="#{colaborador.nivelGCM}">
+									<h:outputText value="#{colaborador.nivelGCM}" />
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+					</p:rowExpansion>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		
+		<h:form id="modifica">
+			<p:dialog id="dialogoModifica" widgetVar="modifica" resizable="false" header="Introduzca los datos de la Capacidad" modal="true">
+				<p:fragment id="modificaFragment">
+					<p:growl globalOnly="true" id="menseInfo" showDetail="true" autoUpdate="true" severity="info" life="2000" />
+					<p:messages globalOnly="true" id="mense" showDetail="true" autoUpdate="true" severity="fatal" closable="true" />
+
+					<h:panelGrid columns="2" cellpadding="4">
+							<p:outputLabel for="nameCapac" value="Nombre:" />
+							<p:inputText required="true" id="nameCapac" maxlength="15" value="#{capacidadController.nuevaCapacidad.nombreCapacidad}"/>
+        			</h:panelGrid>
+        			
+        			<h:panelGrid columns="2" cellpadding="4">
+        				    <p:pickList id="capacidadPickList" value="#{capacidadController.dualCapacidad}" rendered="#{capacidadController.nuevaCapacidad.nombreCapacidad != null}" var="colaborador" effect="bounce"
+						                itemValue="#{colaborador}" itemLabel="#{colaborador.codigo}-#{colaborador.nombre}" showSourceControls="true" showTargetControls="true" showCheckbox="false" responsive="true"
+						                showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="entityConverter">
+						 
+						        <f:facet name="sourceCaption">Todos los colaboradores</f:facet>
+						        <f:facet name="targetCaption">Colaboradores de la capacidad</f:facet>
+						 
+						    </p:pickList>
+			        </h:panelGrid>
+			  
+        			<h:panelGrid columns="3">		 
+        					 <p:commandButton id="modify" value="Modificar" actionListener="#{capacidadController.actualizar}" rendered="#{capacidadController.nuevaCapacidad.nombreCapacidad != null}" update="mense,form:listaResultados,menseInfo,modifica:modificaFragment" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('modifica').hide()"/>
+        				     <p:commandButton id="guardar" value="Guardar" update="mense, form:listaResultados,menseInfo, modificaFragment" rendered="#{capacidadController.nuevaCapacidad.nombreCapacidad == null}"  actionListener="#{capacidadController.crear}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('modifica').hide()"/>
+        					 <p:commandButton id="borrar" value="Borrar" update="mense,form:listaResultados,menseInfo" rendered="#{capacidadController.nuevaCapacidad.nombreCapacidad != null}" actionListener="#{capacidadController.borrar}" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('modifica').hide()"/>
+        					 <p:commandButton id="cancela" value="Cancelar" oncomplete="PF('modifica').hide()"/>
+					</h:panelGrid>
+				</p:fragment>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,126 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+
+	<ui:define name="body" >
+		
+		<!-- NO BORRES EL GROWL -->
+		<p:growl id="growlPromocion" showDetail="true" sticky="true"
+			life="5000" />
+			
+		<h:outputScript library="js" name="calendar_es.js" />
+		
+		<h:form id="filtros">		
+			<p:panel header="Buscar Categoría Profesional">
+				<p:panelGrid columns="2">
+					<p:outputLabel for="filtroNombre" value="Nombre:" />
+					<p:inputText required="false" id="filtroNombre" value="#{catProfesionalController.filtro.nombreCategoriaPro}" />
+					
+					<p:commandButton id="buscar" value="Buscar" actionListener="#{catProfesionalController.buscar}" update="listaResultados" />
+					<p:commandButton id="nuevo" value="Nuevo" actionListener="#{catProfesionalController.nuevoEstatus}" update="detalleForm" oncomplete="PF('detalle').show()" />
+				</p:panelGrid>
+			</p:panel>
+			
+			<p:panel header="Resultados de la Búsqueda de Categorías Profesionales">
+				<p:dataTable id="listaResultados" 
+							 emptyMessage="No se han encontrado categorías Profesionales"
+							 value="#{catProfesionalController.lista}" 
+							 rowKey="#{categoriaProfesional.nombreCategoriaPro}" 
+							 var="categoriaProfesional" 
+							 sortMode="single" 
+							 selectionMode="single" 
+							 selection="#{catProfesionalController.catProfesionalSelec}"
+							 paginator="true" rows="10">
+					<p:ajax event="rowSelect" update="detalleForm:detalleFragment" listener="#{catProfesionalController.listarColaboradores}" oncomplete="PF('detalle').show()" />
+					<p:ajax event="rowToggle" listener="#{catProfesionalController.obtenerCategoriaSeleccionada(categoriaProfesional.idCategoriaPro)}"/>
+
+					<p:column style="width:16px">
+						<p:rowToggler id="desplegarFila" />
+					</p:column>
+					
+					<p:column headerText="Nombre" sortBy="#{categoriaProfesional.nombreCategoriaPro}">
+						<h:outputText value="#{categoriaProfesional.nombreCategoriaPro}" />
+					</p:column>
+					
+					<p:rowExpansion>
+						<p:panelGrid columns="4">
+							<p:dataTable var="colaborador"
+								emptyMessage="No se han encontrado colaboradores en esta Categoría"
+								value="#{catProfesionalController.colaboradoresEnCategoria}" paginator="true"
+								rows="10">
+								<f:facet name="header">
+									Colaboradores de la Categoria
+								</f:facet>
+								<p:column headerText="Apellidos "
+									sortBy="#{colaborador.primerApellido}">
+									<h:outputText
+										value="#{colaborador.primerApellido} #{colaborador.segundoApellido}" />
+								</p:column>
+								<p:column headerText="Nombre" sortBy="#{colaborador.nombre}">
+									<h:outputText value="#{colaborador.nombre}" />
+								</p:column>
+								<p:column headerText="email" sortBy="#{colaborador.email}">
+									<h:outputText value="#{colaborador.email}" />
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+					</p:rowExpansion>
+					
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		
+		<h:form id="detalleForm">		
+			<p:dialog id="dialogoDetalle" widgetVar="detalle" resizable="false" header="Introduzca los datos de la Categoría Profesional" modal="true">
+				<p:messages globalOnly="true" id="msgs" showDetail="true" autoUpdate="true" closable="true" severity="fatal" />
+				<p:growl globalOnly="true" id="msgsInfo" showDetail="true" autoUpdate="true" severity="info" life="2000" />
+				<p:fragment id="detalleFragment">
+					<h:panelGrid columns="2" cellpadding="5">
+						<p:outputLabel for="nombre" value="Nombre:" />
+						<p:inputText required="true"
+									 id="nombre" 
+									 value="#{catProfesionalController.catProfesionalSelec.nombreCategoriaPro}" />
+					</h:panelGrid>
+					
+					<h:panelGrid columns="1">
+						<p:pickList id="catProfesionalPickList" value="#{catProfesionalController.listaDual}" rendered="#{catProfesionalController.catProfesionalSelec.nombreCategoriaPro != null}" var="colaborador" effect="bounce"
+                		itemValue="#{colaborador}" itemLabel="#{colaborador.codigo} - #{colaborador.nombre}" showSourceControls="true" showTargetControls="true" showCheckbox="false" responsive="true"
+                		showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains" converter="entityConverter">
+ 
+        					<f:facet name="sourceCaption">Todos los colaboradores</f:facet>
+        					<f:facet name="targetCaption">Colaboradores de la categoría</f:facet>
+        					
+    					</p:pickList>
+					</h:panelGrid>
+
+					<h:panelGrid columns="3">
+						<p:commandButton id="guardarNuevo" value="Guardar"
+							actionListener="#{catProfesionalController.crear}"							
+							update="detalleFragment,filtros:listaResultados,msgsInfo"
+							rendered="#{catProfesionalController.catProfesionalSelec.nombreCategoriaPro == null}"	
+							oncomplete="if (args &amp;&amp; !args.validationFailed ) PF('detalle').hide()" >
+						</p:commandButton>
+						<p:commandButton id="modificar" value="Modificar"
+							actionListener="#{catProfesionalController.actualizar}"
+							update="detalleFragment,filtros:listaResultados,msgsInfo"
+							rendered="#{catProfesionalController.catProfesionalSelec.nombreCategoriaPro != null}"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()" />
+						<p:commandButton id="eliminar" value="Borrar"
+							actionListener="#{catProfesionalController.borrar}"
+							update="detalleFragment,filtros:listaResultados,msgs,msgsInfo"
+							rendered="#{catProfesionalController.catProfesionalSelec.nombreCategoriaPro != null}"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('detalle').hide()" />
+						<p:commandButton id="cancelar" value="Cancelar" immediate="true" oncomplete="PF('detalle').hide()" >
+							     <p:resetInput target=":detalleForm" />
+						</p:commandButton>
+					</h:panelGrid>
+				</p:fragment>
+
+			</p:dialog>
+
+		</h:form>
+						
+	</ui:define>
+</ui:composition>
